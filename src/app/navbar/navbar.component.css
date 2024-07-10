@@ -47,3 +47,7 @@ nav {
 .mat-icon {
   margin-right: 8px;
 }
+
+form {
+  padding-top: 3%;
+}

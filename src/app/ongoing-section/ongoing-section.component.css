@@ -1,0 +1,13 @@
+section {
+  padding-left: 5%;
+  padding-right: 5%;
+}
+header {
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: space-between;
+}
+
+mat-card {
+  width: 30%;
+}
