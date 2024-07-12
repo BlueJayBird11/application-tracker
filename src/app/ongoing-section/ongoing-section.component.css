@@ -8,40 +8,12 @@ header {
   justify-content: space-between;
 }
 
-mat-card {
-  width: 30%;
-  height: 14rem;
-  margin-bottom: 2rem;
-}
-
 #container {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-evenly;
 }
 
-mat-card-actions {
-  position: absolute;
-  bottom: 0.1rem;
-}
-
-
-#position-line {
-  font-size: 3vw;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 100%;
-}
-
-@media (max-width: 600px) {
-  #position-line {
-    font-size: 5vw; /* Larger on small screens */
-  }
-}
-
-@media (min-width: 1000px) {
-  #position-line {
-    font-size: 16px; /* Fixed size on large screens */
-  }
+app-application {
+  width: 30%;
 }

@@ -58,7 +58,7 @@ export class ApplicationsService {
   ];
   constructor() { }
 
-  getApplications() {
+  getApplications(): Application[] {
     return this.applications;
   }
 
