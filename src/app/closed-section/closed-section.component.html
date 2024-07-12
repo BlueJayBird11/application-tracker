@@ -1,25 +1,14 @@
 <section>
   <header>
     <h4>Closed Applications</h4>
-    <button mat-raised-button>Show All</button>
+    <button (click)="toggleShow()" mat-raised-button>
+      {{ showAll ? "Show Less" : "Show All" }}
+    </button>
   </header>
   <div id="container">
-    @for (application of applications; track application.id) {
-    <mat-card appearance="outlined">
-      <mat-card-header>
-        <mat-card-title>{{ application.company }}</mat-card-title>
-        <mat-card-subtitle id="position-line"
-          >{{ application.position }}: {{ application.type }}</mat-card-subtitle
-        >
-        <mat-card-subtitle>{{ application.location }}</mat-card-subtitle>
-        <mat-card-subtitle>{{
-          application.descriptionOfJob | truncate : 110
-        }}</mat-card-subtitle>
-      </mat-card-header>
-      <mat-card-actions>
-        <button mat-button>More</button>
-      </mat-card-actions>
-    </mat-card>
+    @for (application of applications.slice(0, showAmount); track
+    application.id) {
+    <app-application [application]="application" />
     }
   </div>
 </section>
