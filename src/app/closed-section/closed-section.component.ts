@@ -3,7 +3,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { SharedModule } from '../shared/shared.module';
 
-import { ApplicationsService } from '../ongoing-section/applications.service';
+import { ApplicationsService } from '../shared/application/applications.service';
 
 @Component({
   selector: 'app-closed-section',

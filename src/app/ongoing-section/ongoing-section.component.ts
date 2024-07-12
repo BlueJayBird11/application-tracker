@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import {MatCardModule} from '@angular/material/card';
-import { ApplicationsService } from './applications.service';
+import { ApplicationsService } from '../shared/application/applications.service';
 import { SharedModule } from "../shared/shared.module";
 
 @Component({
