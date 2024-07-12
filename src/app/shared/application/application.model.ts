@@ -8,5 +8,7 @@ export interface Application {
   maxPay: string,
   linkToCompanySite: string,
   linkToJobPost?: string,
-  descriptionOfJob: string
+  descriptionOfJob: string,
+  closed: boolean,
+  closedReason?: string
 }
