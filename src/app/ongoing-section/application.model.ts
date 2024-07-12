@@ -4,8 +4,8 @@ export interface Application {
   position: string,
   type: string,
   location: string,
-  minPay: number,
-  maxPay: number,
+  minPay: string,
+  maxPay: string,
   linkToCompanySite: string,
   linkToJobPost?: string,
   descriptionOfJob: string
