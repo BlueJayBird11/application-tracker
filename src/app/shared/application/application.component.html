@@ -1,4 +1,23 @@
 <mat-card appearance="outlined">
+  <button
+    mat-icon-button
+    [matMenuTriggerFor]="menu"
+    aria-label="Example icon-button with a menu"
+    id="options"
+  >
+    <mat-icon>more_vert</mat-icon>
+  </button>
+  <mat-menu #menu="matMenu">
+    <button mat-menu-item>
+      <mat-icon fontIcon="edit"></mat-icon>
+      <span>Edit</span>
+    </button>
+    <button mat-menu-item>
+      <mat-icon fontIcon="delete"></mat-icon>
+      <span>Delete</span>
+    </button>
+  </mat-menu>
+
   <mat-card-header>
     <mat-card-title>{{ application().company }}</mat-card-title>
     <mat-card-subtitle id="position-line"

@@ -34,3 +34,9 @@ mat-card-actions {
     font-size: 16px; /* Fixed size on large screens */
   }
 }
+
+#options {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+}
