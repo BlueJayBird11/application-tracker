@@ -2,7 +2,8 @@ import { Component } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 
 import { SharedModule } from '../shared/shared.module';
-import { Application } from '../shared/application/application.model';
+
+import { type Application } from '../shared/application/application.model';
 import { ApplicationsService } from '../shared/application/applications.service';
 import { ApplicationComponent } from '../shared/application/application.component';
 

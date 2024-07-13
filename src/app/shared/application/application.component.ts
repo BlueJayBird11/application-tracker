@@ -1,10 +1,11 @@
-import { Application } from './application.model';
 import { Component, input } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
-import { SharedModule } from '../shared.module';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
+
+import { SharedModule } from '../shared.module';
+import { type Application } from './application.model';
 
 @Component({
   selector: 'app-application',
