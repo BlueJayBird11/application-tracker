@@ -11,9 +11,11 @@ header {
 #container {
   display: flex;
   flex-wrap: wrap;
-  justify-content: space-evenly;
+  justify-content:end;
 }
 
 app-application {
   width: 30%;
+  margin-right: auto;
 }
+
