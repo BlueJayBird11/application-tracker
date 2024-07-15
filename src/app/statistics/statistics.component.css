@@ -12,3 +12,10 @@ header {
 #pie {
   width: 25%;
 }
+
+.charts {
+  width: 100%;
+  margin-left: 1rem;
+  display: flex;
+  justify-content: space-around;
+}

@@ -17,7 +17,7 @@ export class StatisticsComponent {
   constructor(private applicationsService: ApplicationsService) {}
   applications: Application[] = this.applicationsService.getApplications();
 
-  showAll: boolean = false;
+  showAll: boolean = true;
 
   toggleShow() {
     this.showAll = !this.showAll;
@@ -29,6 +29,7 @@ export class StatisticsComponent {
 
   title = 'ng-chart';
   chart: any = [];
+  chart2: any = [];
 
   ngOnInit() {
     this.chart = new Chart('canvas', {
@@ -39,6 +40,19 @@ export class StatisticsComponent {
           {
             label: '# of Applications',
             data: this.applicationsRatio,
+            borderWidth: 1,
+          },
+        ],
+      },
+    });
+    this.chart2 = new Chart('canvas2', {
+      type: 'pie',
+      data: {
+        labels: ['Not hiring', 'Position already filled', 'Looking for other people', 'Declined by self', 'Interview stage', 'Accepted'],
+        datasets: [
+          {
+            label: '# of Applications',
+            data: [1,1,1,1,1,1],
             borderWidth: 1,
           },
         ],

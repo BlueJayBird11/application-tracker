@@ -1,12 +1,21 @@
 <section>
   <header>
     <h4>Statistics</h4>
-    <!-- <button (click)="toggleShow()" mat-raised-button>
-      {{ showAll ? "Hide" : "Show" }}
-    </button> -->
-    <button (click)="export()" mat-raised-button>Download as CSV</button>
+    <div>
+      <button (click)="toggleShow()" mat-raised-button>
+        {{ showAll ? "Hide" : "Show" }}
+      </button>
+      <button (click)="export()" mat-raised-button>Download as CSV</button>
+    </div>
   </header>
-  <div id="pie">
-    <canvas id="canvas">{{ chart }}</canvas>
+  <div class="charts">
+    <article id="pie">
+      <h6>Ongoing:Closed</h6>
+      <canvas id="canvas">{{ chart }}</canvas>
+    </article>
+    <article id="pie">
+      <h6>Closed Reason</h6>
+      <canvas id="canvas2">{{ chart }}</canvas>
+    </article>
   </div>
 </section>
