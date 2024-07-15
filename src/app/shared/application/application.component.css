@@ -1,6 +1,7 @@
 mat-card {
   height: 14rem;
   margin-bottom: 2rem;
+  overflow: hidden;
 }
 
 #container {
@@ -39,4 +40,14 @@ mat-card-actions {
   position: absolute;
   top: 0.5rem;
   right: 0.5rem;
+}
+
+#description {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  /* Limit to three lines */
+  max-height: calc(1.2em * 3); /* Adjust line height (1.2em) and number of lines (3) */
+  line-height: 1.2em; /* Adjust line height to match your design */
 }

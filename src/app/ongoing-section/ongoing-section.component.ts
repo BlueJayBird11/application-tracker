@@ -20,7 +20,7 @@ export class OngoingSectionComponent {
   showAmount = 3;
 
   get applications(): Application[] {
-    return this.applicationsService.getApplications().filter((application) => application.closed === false);
+    return this.applicationsService.getApplications().filter((application) => !application.closed);
   }
   toggleShow() {
     if (this.showAll)

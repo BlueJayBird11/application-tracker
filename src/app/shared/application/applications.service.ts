@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Application } from './application.model';
+import * as Papa from 'papaparse';
 
 @Injectable({
   providedIn: 'root'
@@ -106,4 +107,37 @@ export class ApplicationsService {
       return emptyApplication;
     }
   }
+
+  exportToCsv(applications: Application[]): void {
+    const csvData = applications.map(app => ({
+      id: app.id,
+      company: app.company,
+      position: app.position,
+      type: app.type,
+      location: app.location,
+      minPay: app.minPay,
+      maxPay: app.maxPay,
+      linkToCompanySite: app.linkToCompanySite,
+      linkToJobPost: app.linkToJobPost || '', // handle optional field
+      descriptionOfJob: app.descriptionOfJob,
+      closed: app.closed,
+      closedReason: app.closedReason || '' // handle optional field
+    }));
+
+    const csv = Papa.unparse(csvData, {
+      header: true,
+      delimiter: ','
+    });
+
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'applications.csv';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
+
 }

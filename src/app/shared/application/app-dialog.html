@@ -1,0 +1,21 @@
+<h2 mat-dialog-title>{{ data.company }}</h2>
+<mat-dialog-content class="mat-typography">
+  <h3>{{ data.position }}</h3>
+  <p>{{ data.type }}</p>
+  <p>{{ data.location }}</p>
+  @if(data.closed) {
+  <p style="font-weight: bold">CLOSED: {{data.closedReason}}</p>
+  }
+  <p>
+    <a [href]="data.linkToCompanySite"> Company Site </a>
+  </p>
+  @if (data.linkToJobPost) {
+  <p>
+    <a [href]="data.linkToJobPost"> Job Post </a>
+  </p>
+  }
+  <p>{{ data.descriptionOfJob }}</p>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close>Close</button>
+</mat-dialog-actions>

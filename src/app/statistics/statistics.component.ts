@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
 
 import Chart from 'chart.js/auto';
 
@@ -8,13 +9,19 @@ import { Application } from '../shared/application/application.model';
 @Component({
   selector: 'app-statistics',
   standalone: true,
-  imports: [],
+  imports: [MatButtonModule],
   templateUrl: './statistics.component.html',
   styleUrl: './statistics.component.css'
 })
 export class StatisticsComponent {
   constructor(private applicationsService: ApplicationsService) {}
   applications: Application[] = this.applicationsService.getApplications();
+
+  showAll: boolean = false;
+
+  toggleShow() {
+    this.showAll = !this.showAll;
+  }
 
   get applicationsRatio(): number[] {
     return [this.applications.filter((application) => application.closed === false).length, this.applications.filter((application) => application.closed === true).length];
@@ -30,7 +37,7 @@ export class StatisticsComponent {
         labels: ['Ongoing', 'Closed'],
         datasets: [
           {
-            label: '# of Votes',
+            label: '# of Applications',
             data: this.applicationsRatio,
             borderWidth: 1,
           },
@@ -39,4 +46,8 @@ export class StatisticsComponent {
     });
   }
 
+  export(): void {
+    const applications = this.applicationsService.getApplications();
+    this.applicationsService.exportToCsv(applications);
+  }
 }

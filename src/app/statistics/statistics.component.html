@@ -1,3 +1,12 @@
-<div id="pie">
-  <canvas id="canvas">{{ chart }}</canvas>
-</div>
+<section>
+  <header>
+    <h4>Statistics</h4>
+    <!-- <button (click)="toggleShow()" mat-raised-button>
+      {{ showAll ? "Hide" : "Show" }}
+    </button> -->
+    <button (click)="export()" mat-raised-button>Download as CSV</button>
+  </header>
+  <div id="pie">
+    <canvas id="canvas">{{ chart }}</canvas>
+  </div>
+</section>
