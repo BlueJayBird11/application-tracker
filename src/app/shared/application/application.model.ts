@@ -2,7 +2,7 @@ export interface Application {
   id: number,
   company: string,
   position: string,
-  type: string,
+  type: 'Full-Time' | 'Part-Time' | 'Internship' | 'Contract' | '',
   location: string,
   minPay: string,
   maxPay: string,
@@ -10,5 +10,7 @@ export interface Application {
   linkToJobPost?: string,
   descriptionOfJob: string,
   closed: boolean,
-  closedReason?: string
+  closedReason?: 'Not hiring' | 'Position already filled' | 'Looking for other people' | 'Declined by self' | 'Interview' | 'Accepted',
+  dateApplied: string,
+  dateClosed?: string
 }

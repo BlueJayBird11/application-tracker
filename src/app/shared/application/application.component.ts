@@ -3,6 +3,9 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
+import {MatSelectModule} from '@angular/material/select';
+import {MatInputModule} from '@angular/material/input';
+import {MatFormFieldModule} from '@angular/material/form-field';
 import {
   MatDialog,
   MAT_DIALOG_DATA,
@@ -28,10 +31,11 @@ export class ApplicationComponent {
   constructor(public dialog: MatDialog) {}
 
   openDialog() {
-    this.dialog.open(DialogDataExampleDialog, {
+    this.dialog.open(AppDialog, {
       data: this.application(),
     });
   }
+
 
 }
 
@@ -42,6 +46,8 @@ export class ApplicationComponent {
   standalone: true,
   imports: [MatDialogModule, MatButtonModule],
 })
-export class DialogDataExampleDialog {
+export class AppDialog {
   constructor(@Inject(MAT_DIALOG_DATA) public data: Application) {}
 }
+
+

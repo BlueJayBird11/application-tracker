@@ -18,3 +18,12 @@ app-application {
   width: 30%;
   margin-right: auto;
 }
+
+span {
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: space-between;
+  padding-left: 2%;
+  padding-right: 2%;
+  align-items: center;
+}

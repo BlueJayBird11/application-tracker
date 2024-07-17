@@ -1,9 +1,19 @@
 <section>
   <header>
     <h4>Ongoing Applications</h4>
-    <button (click)="toggleShow()" mat-raised-button>
-      {{ showAll ? "Show Less" : "Show All" }}
-    </button>
+    <span>
+      <button
+        mat-icon-button
+        class="add-icon"
+        aria-label="New Application"
+        (click)="openNewAppDialog()"
+      >
+        <mat-icon>add</mat-icon>
+      </button>
+      <button (click)="toggleShow()" mat-raised-button>
+        {{ showAll ? "Show Less" : "Show All" }}
+      </button>
+    </span>
   </header>
   <div id="container">
     @for (application of applications.slice(0, showAmount); track

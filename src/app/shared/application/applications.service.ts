@@ -20,6 +20,7 @@ export class ApplicationsService {
       linkToJobPost: 'https://www.metacareers.com/jobs/410406138583811/',
       descriptionOfJob: 'Meta Platforms, Inc. (Meta), formerly known as Facebook Inc., builds technologies that help people connect, find communities, and grow businesses. When Facebook launched in 2004, it changed the way people connect. Apps and services like Messenger, Instagram, and WhatsApp further empowered billions around the world. Now, Meta is moving beyond 2D screens toward immersive experiences like augmented and virtual reality to help build the next evolution in social technology. To apply, click “Apply to Job” online on this web page.',
       closed: false,
+      dateApplied: '2024-06-16'
     },
     {
       id: 2,
@@ -33,7 +34,9 @@ export class ApplicationsService {
       linkToJobPost: 'https://epic.avature.net/Careers/FolderDetail/Software-Developer/740',
       descriptionOfJob: 'As a software developer at Epic, you’ll write software that impacts the lives of 75% of Americans and 300 million patients around the world. Working in your own office, surrounded by thousands of high-caliber developers, you’ll use modern development methodologies and employ user-centered design, analytics, and machine learning tools to drive innovation in healthcare. Using leading-edge technologies and languages like JS, TS, and C#, you’ll invent better ways to reduce medical errors, streamline record sharing between hospitals, and provide the quality of care a patient deserves.',
       closed: true,
-      closedReason: "Looking for other people"
+      closedReason: "Looking for other people",
+      dateApplied: '2024-06-10',
+      dateClosed: '2024-06-16'
     },
     {
       id: 3,
@@ -46,7 +49,8 @@ export class ApplicationsService {
       linkToCompanySite: 'https://www.microsoft.com/en-us',
       linkToJobPost: 'https://jobs.careers.microsoft.com/global/en/share/1731080/?utm_source=Job Share&utm_campaign=Copy-job-share',
       descriptionOfJob: 'The Industry Solutions Engineering (ISE) team is a global engineering organization that works directly with customers looking to leverage the latest technologies to address their toughest challenges. We work closely with our customers’ engineers to jointly develop code for cloud-based solutions that can accelerate their organization. We work in collaboration with Microsoft product teams, partners, and open-source communities to empower our customers to do more with the cloud. We pride ourselves in making contributions to open source and making our platforms easier to use.',
-      closed: false
+      closed: false,
+      dateApplied: '2024-06-15'
     },
     {
       id: 4,
@@ -59,7 +63,8 @@ export class ApplicationsService {
       linkToCompanySite: 'https://www.apple.com/',
       linkToJobPost: 'https://jobs.apple.com/en-us/details/200548268/software-development-engineer?team=SFTWR',
       descriptionOfJob: 'Imagine what you could do here. At Apple, new ideas have a way of becoming extraordinary products, services, and customer experiences very quickly. Bring passion and dedication to your job and there\'s no telling what you could accomplish. The people here at Apple don’t just build products — they craft the kind of wonder that’s revolutionized entire industries. It’s the diversity of those people and their ideas that encourages the innovation that runs through everything we do, from amazing technology to industry-leading environmental efforts. Join Apple and help us leave the world better than we found it. The Operations SWE team is a part of Manufacturing Systems & Infrastructure team and is responsible for developing infrastructure and manufacturing solutions used to create and service future Apple products. The Operations SWE Team is seeking a highly motivated individual with a background in software development.  In this position, the candidate’s primary responsibility will be designing and developing solutions on both our production lines and within our testing equipment, while collaborating closely with other Apple development software, hardware and testing teams.  The Ops Software Engineer will also be responsible for maintaining and improving existing software solutions.',
-      closed: false
+      closed: false,
+      dateApplied: '2024-06-15'
     },
     {
       id: 5,
@@ -72,7 +77,8 @@ export class ApplicationsService {
       linkToCompanySite: 'https://www.amazon.com/',
       linkToJobPost: 'https://www.amazon.jobs/en/jobs/2664700/software-development-engineer-amazon-aurora-storage',
       descriptionOfJob: 'Are you interested in building hyper-scale database services in the cloud? Do you want to revolutionize the way people manage vast volumes of data in the cloud? Do you want to have direct and immediate impact on hundreds of thousands of users who use AWS database services?',
-      closed: false
+      closed: false,
+      dateApplied: '2024-06-14'
     }
   ];
   constructor() { }
@@ -93,7 +99,8 @@ export class ApplicationsService {
       maxPay: '0',
       linkToCompanySite: '',
       descriptionOfJob: '',
-      closed: false
+      closed: false,
+      dateApplied: ''
     }
     console.log(id);
     const foundApplication = this.applications.find((application) => application.id === id);
@@ -118,10 +125,12 @@ export class ApplicationsService {
       minPay: app.minPay,
       maxPay: app.maxPay,
       linkToCompanySite: app.linkToCompanySite,
-      linkToJobPost: app.linkToJobPost || '', // handle optional field
+      linkToJobPost: app.linkToJobPost || '',
       descriptionOfJob: app.descriptionOfJob,
       closed: app.closed,
-      closedReason: app.closedReason || '' // handle optional field
+      closedReason: app.closedReason || '',
+      dateApplied: app.dateApplied,
+      dateClosed: app.dateClosed || ''
     }));
 
     const csv = Papa.unparse(csvData, {
