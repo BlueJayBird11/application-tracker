@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { MAT_DATE_FORMATS, MAT_NATIVE_DATE_FORMATS, provideNativeDateAdapter } from '@angular/material/core';
 import { MatButtonModule } from '@angular/material/button';
-import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MatDialog, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -65,7 +65,46 @@ export class NewAppDialog {
   readonly dateClosed = new FormControl(new Date());
   applicationClosed: boolean = false;
 
+  enteredCompany: string = '';
+  enteredPosition: string = '';
+  enteredType: string = '';
+  enteredCity: string = '';
+  enteredState: string = '';
+  enteredMinPay: string = '';
+  enteredMaxPay: string = '';
+  enteredLinkToCompanySite: string = '';
+  enteredLinkToJobPost?: string = '';
+  enteredDescriptionOfJob: string = '';
+  enteredClosedReason?: string;
+  enteredDateApplied: string = '';
+
+  application: Application = {
+    id: 0,
+    company: '',
+    position: '',
+    type: '',
+    location: '',
+    minPay: '',
+    maxPay: '',
+    linkToCompanySite: '',
+    descriptionOfJob: '',
+    closed: false,
+    dateApplied: ''
+  }
+
+
   toggleApplicationClosed(event: Event) {
     this.applicationClosed = (event.target as HTMLInputElement).checked;
+  }
+
+  constructor(public dialogRef: MatDialogRef<NewAppDialog>) {}
+
+  addApplication(formData: any) {
+    console.log('Form data:', formData);
+    this.application.position = formData.position;
+    console.log('Form data:', this.application);
+
+    // Perform further actions such as saving data to a service or API
+    this.dialogRef.close();
   }
 }

@@ -1,140 +1,209 @@
 <h2 mat-dialog-title>Add Application</h2>
 <mat-dialog-content class="mat-typography">
-  <p>
-    <mat-form-field>
-      <mat-label>Company Name</mat-label>
-      <input required matInput placeholder="Google" />
-    </mat-form-field>
-  </p>
-  <p>
-    <mat-form-field>
-      <mat-label>Position</mat-label>
-      <input required matInput placeholder="Software Developer" />
-    </mat-form-field>
-  </p>
-  <p>
-    <mat-form-field>
-      <mat-label>Position Type</mat-label>
-      <mat-select required placeholder="Full-Time">
-        <mat-option value="Full-Time">Full-Time</mat-option>
-        <mat-option value="Part-Time">Part-Time</mat-option>
-        <mat-option value="Internship">Internship</mat-option>
-        <mat-option value="Contract">Contract</mat-option>
-      </mat-select>
-    </mat-form-field>
-  </p>
-  <table cellspacing="0">
-    <tr>
-      <td>
-        <mat-form-field>
-          <mat-label>City</mat-label>
-          <input required matInput placeholder="San Francisco" />
-        </mat-form-field>
-      </td>
-      <td>
-        <mat-form-field>
-          <mat-label>State</mat-label>
-          <input required maxlength="2" matInput placeholder="CA" />
-        </mat-form-field>
-      </td>
-    </tr>
-  </table>
-  <p>If you don't have a range for pay, put in same amount for both</p>
-  <table class="example-full-width" cellspacing="0">
-    <tr>
-      <td>
-        <mat-form-field class="example-full-width">
-          <mat-label>Mimimum Pay</mat-label>
-          <input required matInput placeholder="90k/yr" />
-        </mat-form-field>
-      </td>
-      <td>
-        <mat-form-field class="example-full-width">
-          <mat-label>Maximum Pay</mat-label>
-          <input required matInput placeholder="100k/yr" />
-        </mat-form-field>
-      </td>
-    </tr>
-  </table>
-  <p>
-    <mat-form-field>
-      <mat-label>Link to Company Site</mat-label>
-      <input required matInput placeholder="https://www.google.com/" />
-    </mat-form-field>
-  </p>
-  <p>
-    <mat-form-field>
-      <mat-label>Link to Job Post</mat-label>
-      <input matInput placeholder="https://www.google.com/" />
-    </mat-form-field>
-  </p>
-  <p>
-    <mat-form-field>
-      <mat-label>Date Applied</mat-label>
-      <input
-        matInput
-        [matDatepicker]="picker"
-        [formControl]="dateApplied"
-        required
-      />
-      <mat-datepicker-toggle
-        matIconSuffix
-        [for]="picker"
-      ></mat-datepicker-toggle>
-      <mat-datepicker #picker></mat-datepicker>
-    </mat-form-field>
-  </p>
-  <p>
-    <mat-form-field style="width: 30rem">
-      <mat-label>Job Description</mat-label>
-      <textarea
-        required
-        matInput
-        placeholder="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque nisl eros, pulvinar facilisis justo mollis, auctor consequat urna."
-      ></textarea>
-    </mat-form-field>
-  </p>
-  <p>
-    <mat-checkbox [(ngModel)]="applicationClosed"
-      >Application Closed</mat-checkbox
-    >
-  </p>
-
-  <p>
-    <mat-form-field>
-      <mat-label>Closed Reason</mat-label>
-      <mat-select [disabled]="!applicationClosed">
-        <mat-option value="Not hiring">Not hiring</mat-option>
-        <mat-option value="Position already filled"
-          >Position already filled</mat-option
+  <form #applicationForm="ngForm">
+    <p>
+      <mat-form-field>
+        <mat-label>Company Name</mat-label>
+        <input
+          required
+          matInput
+          placeholder="Google"
+          name="company"
+          [(ngModel)]="enteredCompany"
+        />
+      </mat-form-field>
+    </p>
+    <p>
+      <mat-form-field>
+        <mat-label>Position</mat-label>
+        <input
+          required
+          matInput
+          placeholder="Software Developer"
+          name="position"
+          [(ngModel)]="enteredPosition"
+        />
+      </mat-form-field>
+    </p>
+    <p>
+      <mat-form-field>
+        <mat-label>Position Type</mat-label>
+        <mat-select
+          required
+          placeholder="Full-Time"
+          name="type"
+          [(ngModel)]="enteredType"
         >
-        <mat-option value="Looking for other people"
-          >Looking for other people</mat-option
-        >
-        <mat-option value="Declined by self">Declined by self</mat-option>
-        <mat-option value="Interview">Interview</mat-option>
-        <mat-option value="Accepted">Accepted</mat-option>
-      </mat-select>
-    </mat-form-field>
-  </p>
+          <mat-option value="Full-Time">Full-Time</mat-option>
+          <mat-option value="Part-Time">Part-Time</mat-option>
+          <mat-option value="Internship">Internship</mat-option>
+          <mat-option value="Contract">Contract</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </p>
+    <table cellspacing="0">
+      <tr>
+        <td>
+          <mat-form-field>
+            <mat-label>City</mat-label>
+            <input
+              required
+              matInput
+              placeholder="San Francisco"
+              name="city"
+              [(ngModel)]="enteredCity"
+            />
+          </mat-form-field>
+        </td>
+        <td>
+          <mat-form-field>
+            <mat-label>State</mat-label>
+            <input
+              required
+              maxlength="2"
+              matInput
+              placeholder="CA"
+              name="state"
+              [(ngModel)]="enteredState"
+            />
+          </mat-form-field>
+        </td>
+      </tr>
+    </table>
+    <p>If you don't have a range for pay, put in same amount for both</p>
+    <table class="example-full-width" cellspacing="0">
+      <tr>
+        <td>
+          <mat-form-field class="example-full-width">
+            <mat-label>Mimimum Pay</mat-label>
+            <input
+              required
+              matInput
+              placeholder="90k/yr"
+              name="minPay"
+              [(ngModel)]="enteredMinPay"
+            />
+          </mat-form-field>
+        </td>
+        <td>
+          <mat-form-field class="example-full-width">
+            <mat-label>Maximum Pay</mat-label>
+            <input
+              required
+              matInput
+              placeholder="100k/yr"
+              name="maxPay"
+              [(ngModel)]="enteredMaxPay"
+            />
+          </mat-form-field>
+        </td>
+      </tr>
+    </table>
+    <p>
+      <mat-form-field>
+        <mat-label>Link to Company Site</mat-label>
+        <input
+          required
+          matInput
+          placeholder="https://www.google.com/"
+          name="linkToCompanySite"
+          [(ngModel)]="enteredLinkToCompanySite"
+        />
+      </mat-form-field>
+    </p>
+    <p>
+      <mat-form-field>
+        <mat-label>Link to Job Post</mat-label>
+        <input
+          matInput
+          placeholder="https://www.google.com/"
+          name="linkToJobPost"
+          [(ngModel)]="enteredLinkToJobPost"
+        />
+      </mat-form-field>
+    </p>
+    <p>
+      <mat-form-field>
+        <mat-label>Date Applied</mat-label>
+        <input
+          matInput
+          [matDatepicker]="picker"
+          [formControl]="dateApplied"
+          required
+        />
+        <mat-datepicker-toggle
+          matIconSuffix
+          [for]="picker"
+        ></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+      </mat-form-field>
+    </p>
+    <p>
+      <mat-form-field style="width: 30rem">
+        <mat-label>Job Description</mat-label>
+        <textarea
+          required
+          matInput
+          placeholder="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque nisl eros, pulvinar facilisis justo mollis, auctor consequat urna."
+          name="descriptionOfJob"
+          [(ngModel)]="enteredDescriptionOfJob"
+        ></textarea>
+      </mat-form-field>
+    </p>
 
-  <p>
-    <mat-form-field>
-      <mat-label>Date Closed</mat-label>
-      <input
-        matInput
-        [matDatepicker]="closedDate"
-        [disabled]="!applicationClosed"
-      />
-      <mat-datepicker-toggle
-        matIconSuffix
-        [for]="closedDate"
-      ></mat-datepicker-toggle>
-      <mat-datepicker #closedDate></mat-datepicker>
-    </mat-form-field>
-  </p>
+    <p>
+      <mat-checkbox [(ngModel)]="applicationClosed" name="closed"
+        >Application Closed</mat-checkbox
+      >
+    </p>
+
+    <p>
+      <mat-form-field>
+        <mat-label>Closed Reason</mat-label>
+        <mat-select
+          name="closedReason"
+          [(ngModel)]="enteredClosedReason"
+          [disabled]="!applicationClosed"
+        >
+          <mat-option value="Not hiring">Not hiring</mat-option>
+          <mat-option value="Position already filled"
+            >Position already filled</mat-option
+          >
+          <mat-option value="Looking for other people"
+            >Looking for other people</mat-option
+          >
+          <mat-option value="Declined by self">Declined by self</mat-option>
+          <mat-option value="Interview">Interview</mat-option>
+          <mat-option value="Accepted">Accepted</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </p>
+
+    <p>
+      <mat-form-field>
+        <mat-label>Date Closed</mat-label>
+        <input
+          matInput
+          [matDatepicker]="closedDate"
+          name="dateClosed"
+          [disabled]="!applicationClosed"
+        />
+        <mat-datepicker-toggle
+          matIconSuffix
+          [for]="closedDate"
+        ></mat-datepicker-toggle>
+        <mat-datepicker #closedDate></mat-datepicker>
+      </mat-form-field>
+    </p>
+  </form>
 </mat-dialog-content>
 <mat-dialog-actions align="end">
   <button mat-button mat-dialog-close>Cancel</button>
-  <button mat-button [mat-dialog-close]="true" cdkFocusInitial>Add</button>
+  <button
+    mat-button
+    (click)="addApplication(applicationForm.value)"
+    cdkFocusInitial
+  >
+    Add
+  </button>
 </mat-dialog-actions>
