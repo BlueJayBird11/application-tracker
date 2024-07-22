@@ -10,7 +10,11 @@
           placeholder="Google"
           name="company"
           [(ngModel)]="enteredCompany"
+          #company="ngModel"
         />
+        @if (company.invalid && (company.dirty || company.touched)) {
+        <mat-error> Company Name is required </mat-error>
+        }
       </mat-form-field>
     </p>
     <p>
@@ -22,7 +26,11 @@
           placeholder="Software Developer"
           name="position"
           [(ngModel)]="enteredPosition"
+          #position="ngModel"
         />
+        @if (position.invalid && (position.dirty || position.touched)) {
+        <mat-error> Position Name is required </mat-error>
+        }
       </mat-form-field>
     </p>
     <p>
@@ -33,12 +41,16 @@
           placeholder="Full-Time"
           name="type"
           [(ngModel)]="enteredType"
+          #type="ngModel"
         >
           <mat-option value="Full-Time">Full-Time</mat-option>
           <mat-option value="Part-Time">Part-Time</mat-option>
           <mat-option value="Internship">Internship</mat-option>
           <mat-option value="Contract">Contract</mat-option>
         </mat-select>
+        @if (type.invalid && (type.dirty || type.touched)) {
+        <mat-error> Position Type is required </mat-error>
+        }
       </mat-form-field>
     </p>
     <table cellspacing="0">
@@ -52,7 +64,11 @@
               placeholder="San Francisco"
               name="city"
               [(ngModel)]="enteredCity"
+              #city="ngModel"
             />
+            @if (city.invalid && (city.dirty || city.touched)) {
+            <mat-error> City is required </mat-error>
+            }
           </mat-form-field>
         </td>
         <td>
@@ -65,7 +81,11 @@
               placeholder="CA"
               name="state"
               [(ngModel)]="enteredState"
+              #state="ngModel"
             />
+            @if (state.invalid && (state.dirty || state.touched)) {
+            <mat-error> State is required </mat-error>
+            }
           </mat-form-field>
         </td>
       </tr>
@@ -82,7 +102,11 @@
               placeholder="90k/yr"
               name="minPay"
               [(ngModel)]="enteredMinPay"
+              #minPay="ngModel"
             />
+            @if (minPay.invalid && (minPay.dirty || minPay.touched)) {
+            <mat-error> Mimimum Pay is required </mat-error>
+            }
           </mat-form-field>
         </td>
         <td>
@@ -94,7 +118,11 @@
               placeholder="100k/yr"
               name="maxPay"
               [(ngModel)]="enteredMaxPay"
+              #maxPay="ngModel"
             />
+            @if (maxPay.invalid && (maxPay.dirty || maxPay.touched)) {
+            <mat-error> Maximum Pay is required </mat-error>
+            }
           </mat-form-field>
         </td>
       </tr>
@@ -108,7 +136,12 @@
           placeholder="https://www.google.com/"
           name="linkToCompanySite"
           [(ngModel)]="enteredLinkToCompanySite"
+          #linkToCompanySite="ngModel"
         />
+        @if (linkToCompanySite.invalid && (linkToCompanySite.dirty ||
+        linkToCompanySite.touched)) {
+        <mat-error> Maximum Pay is required </mat-error>
+        }
       </mat-form-field>
     </p>
     <p>
@@ -164,6 +197,7 @@
           name="closedReason"
           [(ngModel)]="enteredClosedReason"
           [disabled]="!applicationClosed"
+          [required]="applicationClosed"
         >
           <mat-option value="Not hiring">Not hiring</mat-option>
           <mat-option value="Position already filled"
@@ -187,6 +221,7 @@
           [matDatepicker]="closedDate"
           name="dateClosed"
           [disabled]="!applicationClosed"
+          [required]="applicationClosed"
         />
         <mat-datepicker-toggle
           matIconSuffix

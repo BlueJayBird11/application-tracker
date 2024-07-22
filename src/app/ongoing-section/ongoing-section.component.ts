@@ -78,31 +78,44 @@ export class NewAppDialog {
   enteredClosedReason?: string;
   enteredDateApplied: string = '';
 
-  application: Application = {
-    id: 0,
-    company: '',
-    position: '',
-    type: '',
-    location: '',
-    minPay: '',
-    maxPay: '',
-    linkToCompanySite: '',
-    descriptionOfJob: '',
-    closed: false,
-    dateApplied: ''
-  }
-
-
   toggleApplicationClosed(event: Event) {
     this.applicationClosed = (event.target as HTMLInputElement).checked;
   }
 
-  constructor(public dialogRef: MatDialogRef<NewAppDialog>) {}
+  constructor(public dialogRef: MatDialogRef<NewAppDialog>, private applicationsService: ApplicationsService) {}
 
   addApplication(formData: any) {
-    console.log('Form data:', formData);
-    this.application.position = formData.position;
-    console.log('Form data:', this.application);
+    console.log('Form data:', {
+      company: formData.company,
+      position: formData.position,
+      type: formData.type,
+      location: formData.city + ", " + formData.state,
+      minPay: formData.minPay,
+      maxPay: formData.maxPay,
+      linkToCompanySite: formData.linkToCompanySite,
+      linkToJobPost: (formData.linkToJobPost !== "") ? formData.linkToJobPost : undefined,
+      descriptionOfJob: formData.descriptionOfJob,
+      closed: formData.closed,
+      closedReason: formData.closedReason,
+      dateApplied: this.dateApplied.value?.getFullYear() + "-" + (this.dateApplied.value!.getMonth()+1) + "-" + this.dateApplied.value?.getDate(),
+      dateClosed: (formData.closed) ? this.dateClosed.value?.getFullYear() + "-" + (this.dateClosed.value!.getMonth()+1) + "-" + this.dateClosed.value?.getDate() : undefined,
+    });
+
+    this.applicationsService.addApplication({
+      company: formData.company,
+      position: formData.position,
+      type: formData.type,
+      location: formData.city + ", " + formData.state,
+      minPay: formData.minPay,
+      maxPay: formData.maxPay,
+      linkToCompanySite: formData.linkToCompanySite,
+      linkToJobPost: (formData.linkToJobPost !== "") ? formData.linkToJobPost : undefined,
+      descriptionOfJob: formData.descriptionOfJob,
+      closed: formData.closed,
+      closedReason: formData.closedReason,
+      dateApplied: this.dateApplied.value?.getFullYear() + "-" + (this.dateApplied.value!.getMonth()+1) + "-" + this.dateApplied.value?.getDate(),
+      dateClosed: (formData.closed) ? this.dateClosed.value?.getFullYear() + "-" + (this.dateClosed.value!.getMonth()+1) + "-" + this.dateClosed.value?.getDate() : undefined,
+    })
 
     // Perform further actions such as saving data to a service or API
     this.dialogRef.close();
