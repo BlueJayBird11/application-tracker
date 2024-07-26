@@ -7,7 +7,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIcon } from '@angular/material/icon';
 import {MatDatepickerModule} from '@angular/material/datepicker';
-import { FormBuilder, FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormControl, FormsModule, NgForm, ReactiveFormsModule } from '@angular/forms';
 import {MatCheckboxModule} from '@angular/material/checkbox';
 
 
@@ -77,12 +77,21 @@ export class NewAppDialog {
   enteredDescriptionOfJob: string = '';
   enteredClosedReason?: string;
   enteredDateApplied: string = '';
+  enteredClosedDate: string = '';
 
   toggleApplicationClosed(event: Event) {
     this.applicationClosed = (event.target as HTMLInputElement).checked;
   }
 
   constructor(public dialogRef: MatDialogRef<NewAppDialog>, private applicationsService: ApplicationsService) {}
+
+  onAddButtonClick(form: NgForm) {
+    if (form.invalid) {
+      form.control.markAllAsTouched(); // Mark all fields as touched to trigger validation
+      return;
+    }
+    this.addApplication(form.value);
+  }
 
   addApplication(formData: any) {
     console.log('Form data:', {

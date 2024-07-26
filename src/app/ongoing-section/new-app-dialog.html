@@ -169,6 +169,10 @@
           [for]="picker"
         ></mat-datepicker-toggle>
         <mat-datepicker #picker></mat-datepicker>
+        @if (dateApplied.invalid && (dateApplied.dirty || dateApplied.touched))
+        {
+        <mat-error> Date applied is required </mat-error>
+        }
       </mat-form-field>
     </p>
     <p>
@@ -180,7 +184,12 @@
           placeholder="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque nisl eros, pulvinar facilisis justo mollis, auctor consequat urna."
           name="descriptionOfJob"
           [(ngModel)]="enteredDescriptionOfJob"
+          #descriptionOfJob="ngModel"
         ></textarea>
+        @if (descriptionOfJob.invalid && (descriptionOfJob.dirty ||
+        descriptionOfJob.touched)) {
+        <mat-error> Description is required </mat-error>
+        }
       </mat-form-field>
     </p>
 
@@ -198,6 +207,7 @@
           [(ngModel)]="enteredClosedReason"
           [disabled]="!applicationClosed"
           [required]="applicationClosed"
+          #closedReason="ngModel"
         >
           <mat-option value="Not hiring">Not hiring</mat-option>
           <mat-option value="Position already filled"
@@ -210,6 +220,10 @@
           <mat-option value="Interview">Interview</mat-option>
           <mat-option value="Accepted">Accepted</mat-option>
         </mat-select>
+        @if (applicationClosed && closedReason.invalid && (closedReason.dirty ||
+        closedReason.touched)) {
+        <mat-error> Reason is required </mat-error>
+        }
       </mat-form-field>
     </p>
 
@@ -222,12 +236,18 @@
           name="dateClosed"
           [disabled]="!applicationClosed"
           [required]="applicationClosed"
+          [(ngModel)]="enteredClosedDate"
+          #dateClosed="ngModel"
         />
         <mat-datepicker-toggle
           matIconSuffix
           [for]="closedDate"
         ></mat-datepicker-toggle>
         <mat-datepicker #closedDate></mat-datepicker>
+        @if (applicationClosed && dateClosed.invalid && (dateClosed.dirty ||
+        dateClosed.touched)) {
+        <mat-error> Date closed is required </mat-error>
+        }
       </mat-form-field>
     </p>
   </form>
@@ -236,7 +256,7 @@
   <button mat-button mat-dialog-close>Cancel</button>
   <button
     mat-button
-    (click)="addApplication(applicationForm.value)"
+    (click)="onAddButtonClick(applicationForm)"
     cdkFocusInitial
   >
     Add
