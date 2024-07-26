@@ -45,10 +45,14 @@ export class ApplicationsService {
     }
   }
 
+  printApplications() {
+    console.log(this.applications);
+  }
+
   addApplication(applicationData: NewApplicationData)
   {
     this.applications.push({
-      id: this.applications.length,
+      id: this.applications.length+1,
       company: applicationData.company,
       position: applicationData.position,
       type: applicationData.type,
@@ -63,6 +67,26 @@ export class ApplicationsService {
       dateApplied: applicationData.dateApplied,
       dateClosed: applicationData.dateClosed,
     });
+  }
+
+  editApplication(applicationData: Application) {
+    for (let application of this.applications) {
+      if (application.id === applicationData.id) {
+        application.company = applicationData.company;
+        application.position = applicationData.position;
+        application.type = applicationData.type;
+        application.location = applicationData.location;
+        application.minPay = applicationData.minPay;
+        application.maxPay = applicationData.maxPay;
+        application.linkToCompanySite = applicationData.linkToCompanySite;
+        application.linkToJobPost = applicationData.linkToJobPost;
+        application.descriptionOfJob = applicationData.descriptionOfJob;
+        application.closed = applicationData.closed;
+        application.closedReason = (applicationData.closed) ? applicationData.closedReason : undefined;
+        application.dateApplied = applicationData.dateApplied;
+        application.dateClosed = (applicationData.closed) ? applicationData.dateClosed : undefined;
+      }
+    }
   }
 
   exportToCsv(applications: Application[]): void {
