@@ -19,3 +19,11 @@ header {
   display: flex;
   justify-content: space-around;
 }
+
+.buttons {
+  display: flex;
+  width: 25%;
+  flex-flow: row nowrap;
+  justify-content: space-evenly;
+  align-items: center;
+}

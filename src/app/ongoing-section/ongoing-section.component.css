@@ -11,13 +11,14 @@ header {
 #container {
   display: flex;
   flex-wrap: wrap;
-  justify-content:end;
+  justify-content:start;
 }
 
 app-application {
   width: 30%;
-  margin-right: auto;
+  margin-right: 3.3%;
 }
+
 
 span {
   display: flex;
@@ -26,4 +27,5 @@ span {
   padding-left: 2%;
   padding-right: 2%;
   align-items: center;
+  width: 15%;
 }
