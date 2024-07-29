@@ -25,6 +25,12 @@
       {{ application().type }}</mat-card-subtitle
     >
     <mat-card-subtitle>{{ application().location }}</mat-card-subtitle>
+    <mat-card-subtitle
+      >{{ application().dateApplied | date : "mediumDate" }} @if
+      (application().dateClosed) { -
+      {{ application().dateClosed | date : "mediumDate" }}
+      }
+    </mat-card-subtitle>
     <mat-card-subtitle id="description">
       {{ application().descriptionOfJob }}
     </mat-card-subtitle>

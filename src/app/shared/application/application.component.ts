@@ -22,13 +22,14 @@ import { FormControl, FormsModule, NgForm, ReactiveFormsModule } from '@angular/
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MAT_DATE_FORMATS, MAT_NATIVE_DATE_FORMATS, provideNativeDateAdapter } from '@angular/material/core';
+import { DatePipe } from '@angular/common';
 
 // animal: 'panda' | 'unicorn' | 'lion';
 
 @Component({
   selector: 'app-application',
   standalone: true,
-  imports: [MatButtonModule, MatCardModule, SharedModule, MatIconModule, MatMenuModule],
+  imports: [MatButtonModule, MatCardModule, SharedModule, MatIconModule, MatMenuModule, DatePipe],
   templateUrl: './application.component.html',
   styleUrl: './application.component.css'
 })
@@ -74,8 +75,8 @@ export class AppDialog {
 export class EditAppDialog {
   constructor(@Inject(MAT_DIALOG_DATA) public data: Application, public dialogRef: MatDialogRef<EditAppDialog>, private applicationsService: ApplicationsService) {}
 
-  readonly dateApplied = new FormControl(new Date());
-  readonly dateClosed = new FormControl(new Date());
+  readonly dateApplied = new FormControl(new Date(this.data.dateApplied));
+  // readonly dateClosed = (this.data.closed ? new FormControl(new Date(this.data.dateClosed!)) : new FormControl(new Date()));
   applicationClosed: boolean = this.data.closed;
 
   id: number = this.data.id;
@@ -121,8 +122,8 @@ export class EditAppDialog {
       descriptionOfJob: formData.descriptionOfJob,
       closed: formData.closed,
       closedReason: formData.closedReason,
-      dateApplied: this.dateApplied.value?.getFullYear() + "-" + (this.dateApplied.value!.getMonth() + 1) + "-" + this.dateApplied.value?.getDate(),
-      dateClosed: (formData.closed) ? this.dateClosed.value?.getFullYear() + "-" + (this.dateClosed.value!.getMonth() + 1) + "-" + this.dateClosed.value?.getDate() : undefined,
+      dateApplied: this.dateApplied.value?.getFullYear() + "-" + (this.dateApplied.value!.getMonth() + 1) + "-" + (this.dateApplied.value?.getDate()!),
+      dateClosed: (formData.closed) ? this.enteredClosedDate : undefined,
     };
 
     console.log(edittedApp);
