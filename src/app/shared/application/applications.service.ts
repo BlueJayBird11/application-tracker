@@ -89,8 +89,16 @@ export class ApplicationsService {
         application.closedReason = (applicationData.closed) ? applicationData.closedReason : undefined;
         application.dateApplied = applicationData.dateApplied;
         application.dateClosed = (applicationData.closed) ? applicationData.dateClosed : undefined;
+        break;
       }
     }
+  }
+
+  deleteApplicationById(id: number)
+  {
+    // contact server
+
+    this.applications = this.applications.filter((application) => application.id !== id);
   }
 
   exportToCsv(applications: Application[]): void {

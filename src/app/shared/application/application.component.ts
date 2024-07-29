@@ -48,6 +48,12 @@ export class ApplicationComponent {
       data: this.application(),
     });
   }
+
+  openDeleteDialog() {
+    this.dialog.open(DeleteAppDialog, {
+      data: this.application().id,
+    })
+  }
 }
 
 
@@ -131,6 +137,26 @@ export class EditAppDialog {
     this.applicationsService.editApplication(edittedApp);
 
     // Perform further actions such as saving data to a service or API
+    this.dialogRef.close();
+  }
+}
+
+@Component({
+  selector: 'delete-app-dialog',
+  templateUrl: 'delete-app-dialog.html',
+  standalone: true,
+  imports: [MatDialogModule, MatButtonModule, MatSelectModule, MatInputModule, MatFormFieldModule, MatDatepickerModule,MatDatepickerModule,ReactiveFormsModule,MatCheckboxModule, FormsModule],
+  providers: [
+    provideNativeDateAdapter(),
+    {provide: MAT_DATE_FORMATS, useValue: MAT_NATIVE_DATE_FORMATS},
+  ],
+})
+export class DeleteAppDialog {
+  constructor(@Inject(MAT_DIALOG_DATA) public data: number, public dialogRef: MatDialogRef<EditAppDialog>, private applicationsService: ApplicationsService) {}
+
+  onDelButtonClick() {
+    // remove application
+    this.applicationsService.deleteApplicationById(this.data)
     this.dialogRef.close();
   }
 }
