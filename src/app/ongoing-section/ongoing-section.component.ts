@@ -7,7 +7,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIcon } from '@angular/material/icon';
 import {MatDatepickerModule} from '@angular/material/datepicker';
-import { FormBuilder, FormControl, FormsModule, NgForm, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, FormsModule, NgForm, ReactiveFormsModule, Validators } from '@angular/forms';
 import {MatCheckboxModule} from '@angular/material/checkbox';
 
 
@@ -16,6 +16,7 @@ import { SharedModule } from "../shared/shared.module";
 import { type Application } from './../shared/application/application.model';
 import { ApplicationsService } from '../shared/application/applications.service';
 import { ApplicationComponent } from '../shared/application/application.component';
+import { urlValidator } from '../shared/validators/validators';
 
 
 @Component({
@@ -79,11 +80,37 @@ export class NewAppDialog {
   enteredDateApplied: string = '';
   enteredClosedDate: string = '';
 
+  form: FormGroup;
+
+  constructor(
+    public dialogRef: MatDialogRef<NewAppDialog>,
+    private applicationsService: ApplicationsService,
+    private fb: FormBuilder
+  ) {
+    this.form = this.fb.group({
+      company: ['', Validators.required],
+      position: ['', Validators.required],
+      type: ['', Validators.required],
+      city: ['', Validators.required],
+      state: ['', Validators.required],
+      minPay: ['', Validators.required],
+      maxPay: ['', Validators.required],
+      linkToCompanySite: ['', [Validators.required, urlValidator()]],
+      linkToJobPost: ['', urlValidator()],
+      descriptionOfJob: ['', Validators.required],
+      closed: [false],
+      closedReason: [''],
+      dateApplied: [this.dateApplied.value],
+      dateClosed: [this.dateClosed.value]
+    });
+  }
+
+
   toggleApplicationClosed(event: Event) {
     this.applicationClosed = (event.target as HTMLInputElement).checked;
   }
 
-  constructor(public dialogRef: MatDialogRef<NewAppDialog>, private applicationsService: ApplicationsService) {}
+  // constructor(public dialogRef: MatDialogRef<NewAppDialog>, private applicationsService: ApplicationsService) {}
 
   onAddButtonClick(form: NgForm) {
     if (form.invalid) {
@@ -123,7 +150,7 @@ export class NewAppDialog {
       closed: formData.closed,
       closedReason: formData.closedReason,
       dateApplied: this.dateApplied.value?.getFullYear() + "-" + (this.dateApplied.value!.getMonth()+1) + "-" + this.dateApplied.value?.getDate(),
-      dateClosed: (formData.closed) ? this.dateClosed.value?.getFullYear() + "-" + (this.dateClosed.value!.getMonth()+1) + "-" + this.dateClosed.value?.getDate() : undefined,
+      dateClosed: (formData.closed) ? this.enteredClosedDate : undefined,
     })
 
     // Perform further actions such as saving data to a service or API

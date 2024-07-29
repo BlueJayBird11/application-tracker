@@ -8,11 +8,11 @@
     <mat-icon>more_vert</mat-icon>
   </button>
   <mat-menu #menu="matMenu">
-    <button mat-menu-item>
+    <button mat-menu-item (click)="openEditDialog()">
       <mat-icon fontIcon="edit"></mat-icon>
       <span>Edit</span>
     </button>
-    <button mat-menu-item>
+    <button mat-menu-item (click)="openDeleteDialog()">
       <mat-icon fontIcon="delete"></mat-icon>
       <span>Delete</span>
     </button>
@@ -25,6 +25,12 @@
       {{ application().type }}</mat-card-subtitle
     >
     <mat-card-subtitle>{{ application().location }}</mat-card-subtitle>
+    <mat-card-subtitle
+      >{{ application().dateApplied | date : "mediumDate" }} @if
+      (application().dateClosed) { -
+      {{ application().dateClosed | date : "mediumDate" }}
+      }
+    </mat-card-subtitle>
     <mat-card-subtitle id="description">
       {{ application().descriptionOfJob }}
     </mat-card-subtitle>
