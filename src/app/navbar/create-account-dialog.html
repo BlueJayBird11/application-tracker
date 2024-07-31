@@ -1,0 +1,70 @@
+<h2 mat-dialog-title>Sign Up</h2>
+<mat-dialog-content class="mat-typography">
+  <form #applicationForm="ngForm">
+    <p>
+      <mat-form-field class="example-full-width">
+        <mat-label>Email</mat-label>
+        <input
+          type="email"
+          matInput
+          [formControl]="emailFormControl"
+          [errorStateMatcher]="matcher"
+          placeholder="Ex. dave@example.com"
+          [(ngModel)]="enteredEmail"
+        />
+        <!-- <mat-hint>Errors appear instantly!</mat-hint> -->
+        @if (emailFormControl.hasError('email') &&
+        !emailFormControl.hasError('required')) {
+        <mat-error>Please enter a valid email address</mat-error>
+        } @if (emailFormControl.hasError('required')) {
+        <mat-error>Email is required</mat-error>
+        }
+      </mat-form-field>
+    </p>
+    <p>
+      <mat-form-field>
+        <mat-label>Enter your password</mat-label>
+        <input matInput [type]="hide() ? 'password' : 'text'" />
+        <button
+          mat-icon-button
+          matSuffix
+          (click)="clickHide1($event)"
+          [attr.aria-label]="'Hide password'"
+          [attr.aria-pressed]="hide()"
+        >
+          <mat-icon>{{hide() ? 'visibility_off' : 'visibility'}}</mat-icon>
+        </button>
+      </mat-form-field>
+    </p>
+    <p>
+      <mat-form-field>
+        <mat-label>Re-enter Password</mat-label>
+        <input
+          matInput
+          name="password2"
+          [(ngModel)]="enteredPassword2"
+          [type]="hide2() ? 'password' : 'text'"
+        />
+        <button
+          mat-icon-button
+          matSuffix
+          (click)="clickHide2($event)"
+          [attr.aria-label]="'Hide password'"
+          [attr.aria-pressed]="hide2()"
+        >
+          <mat-icon>{{hide2() ? 'visibility_off' : 'visibility'}}</mat-icon>
+        </button>
+      </mat-form-field>
+    </p>
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close>Cancel</button>
+  <button
+    mat-button
+    (click)="onSignUpButtonClick(applicationForm)"
+    cdkFocusInitial
+  >
+    Sign Up
+  </button>
+</mat-dialog-actions>

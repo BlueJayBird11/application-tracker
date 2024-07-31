@@ -12,8 +12,8 @@
       </form>
     </div>
     <div id="groupLinks">
-      <a mat-button target="_blank">Log In</a>
-      <a mat-raised-button target="_blank">Sign Up</a>
+      <a mat-button (click)="openLoginDialog()">Log In</a>
+      <a mat-raised-button (click)="openSignUpDialog()">Sign Up</a>
     </div>
   </nav>
 </section>

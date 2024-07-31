@@ -9,3 +9,13 @@ export function urlValidator(): ValidatorFn {
     return { invalidUrl: false };
   };
 }
+
+export function passwordValidator(password1: string): ValidatorFn {
+  return (control: AbstractControl): ValidationErrors | null => {
+    const password2 = control.value as string;
+    if (password2 && !(password1 === password2)) {
+      return { invalid: true };
+    }
+    return null;
+  };
+}

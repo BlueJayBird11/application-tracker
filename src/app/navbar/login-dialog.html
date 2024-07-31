@@ -1,0 +1,46 @@
+<h2 mat-dialog-title>Sign Up</h2>
+<mat-dialog-content class="mat-typography">
+  <form #applicationForm="ngForm">
+    <p>
+      <mat-form-field>
+        <mat-label>Email</mat-label>
+        <input
+          required
+          matInput
+          placeholder="example@email.com"
+          name="email"
+          [(ngModel)]="enteredEmail"
+          #email="ngModel"
+        />
+        @if (email.invalid && (email.dirty || email.touched)) {
+        <mat-error> Email is required </mat-error>
+        }
+      </mat-form-field>
+    </p>
+    <p>
+      <mat-form-field>
+        <mat-label>Password</mat-label>
+        <input
+          required
+          matInput
+          name="password"
+          [(ngModel)]="enteredPassword"
+          #password="ngModel"
+        />
+        @if (password.invalid && (password.dirty || password.touched)) {
+        <mat-error> Password is required </mat-error>
+        }
+      </mat-form-field>
+    </p>
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close>Cancel</button>
+  <button
+    mat-button
+    (click)="onSignUpButtonClick(applicationForm)"
+    cdkFocusInitial
+  >
+    Sign Up
+  </button>
+</mat-dialog-actions>
