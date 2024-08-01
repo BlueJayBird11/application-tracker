@@ -1,22 +1,22 @@
 <h2 mat-dialog-title>Sign Up</h2>
 <mat-dialog-content class="mat-typography">
-  <form #applicationForm="ngForm">
+  <form [formGroup]="form">
     <p>
       <mat-form-field class="example-full-width">
         <mat-label>Email</mat-label>
         <input
           type="email"
           matInput
-          [formControl]="emailFormControl"
+          id="email"
+          formControlName="email"
           [errorStateMatcher]="matcher"
           placeholder="Ex. dave@example.com"
-          [(ngModel)]="enteredEmail"
         />
         <!-- <mat-hint>Errors appear instantly!</mat-hint> -->
-        @if (emailFormControl.hasError('email') &&
-        !emailFormControl.hasError('required')) {
+        @if (emailFormControl!.hasError('email') &&
+        !emailFormControl!.hasError('required')) {
         <mat-error>Please enter a valid email address</mat-error>
-        } @if (emailFormControl.hasError('required')) {
+        } @if (emailFormControl!.hasError('required')) {
         <mat-error>Email is required</mat-error>
         }
       </mat-form-field>
@@ -24,8 +24,15 @@
     <p>
       <mat-form-field>
         <mat-label>Enter your password</mat-label>
-        <input matInput [type]="hide() ? 'password' : 'text'" />
+        <input
+          matInput
+          id="password1"
+          formControlName="password1"
+          [type]="hide() ? 'password' : 'text'"
+          [errorStateMatcher]="matcher"
+        />
         <button
+          required
           mat-icon-button
           matSuffix
           (click)="clickHide1($event)"
@@ -34,6 +41,12 @@
         >
           <mat-icon>{{hide() ? 'visibility_off' : 'visibility'}}</mat-icon>
         </button>
+        @if (password1FormControl!.hasError('minlength') &&
+        !password1FormControl!.hasError('required')) {
+        <mat-error>Password must be greater the 4 charaters</mat-error>
+        } @if (password1FormControl!.hasError('required')) {
+        <mat-error>Password is required</mat-error>
+        }
       </mat-form-field>
     </p>
     <p>
@@ -41,9 +54,10 @@
         <mat-label>Re-enter Password</mat-label>
         <input
           matInput
-          name="password2"
-          [(ngModel)]="enteredPassword2"
+          formControlName="password2"
+          id="password2"
           [type]="hide2() ? 'password' : 'text'"
+          [errorStateMatcher]="matcher"
         />
         <button
           mat-icon-button
@@ -54,17 +68,19 @@
         >
           <mat-icon>{{hide2() ? 'visibility_off' : 'visibility'}}</mat-icon>
         </button>
+        @if (form.hasError('PasswordNoMatch') &&
+        !password1FormControl!.hasError('required')) {
+        <mat-error>Passwords must match</mat-error>
+        } @if (password1FormControl!.hasError('required')) {
+        <mat-error>Password is required</mat-error>
+        }
       </mat-form-field>
     </p>
   </form>
 </mat-dialog-content>
 <mat-dialog-actions align="end">
   <button mat-button mat-dialog-close>Cancel</button>
-  <button
-    mat-button
-    (click)="onSignUpButtonClick(applicationForm)"
-    cdkFocusInitial
-  >
+  <button mat-button (click)="onSignUpButtonClick()" cdkFocusInitial>
     Sign Up
   </button>
 </mat-dialog-actions>
