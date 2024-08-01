@@ -1,4 +1,4 @@
-<h2 mat-dialog-title>Sign Up</h2>
+<h2 mat-dialog-title>Login</h2>
 <mat-dialog-content class="mat-typography">
   <form #applicationForm="ngForm">
     <p>
@@ -19,17 +19,23 @@
     </p>
     <p>
       <mat-form-field>
-        <mat-label>Password</mat-label>
+        <mat-label>Enter your password</mat-label>
         <input
-          required
           matInput
-          name="password"
-          [(ngModel)]="enteredPassword"
-          #password="ngModel"
+          id="password1"
+          formControlName="password1"
+          [type]="hide() ? 'password' : 'text'"
         />
-        @if (password.invalid && (password.dirty || password.touched)) {
-        <mat-error> Password is required </mat-error>
-        }
+        <button
+          required
+          mat-icon-button
+          matSuffix
+          (click)="clickHide($event)"
+          [attr.aria-label]="'Hide password'"
+          [attr.aria-pressed]="hide()"
+        >
+          <mat-icon>{{hide() ? 'visibility_off' : 'visibility'}}</mat-icon>
+        </button>
       </mat-form-field>
     </p>
   </form>

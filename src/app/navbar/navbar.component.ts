@@ -2,9 +2,7 @@ import { Component, signal } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, FormGroupDirective, FormsModule, NgForm, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 
-import { MatCheckboxModule } from '@angular/material/checkbox';
 import { provideNativeDateAdapter, MAT_DATE_FORMATS, MAT_NATIVE_DATE_FORMATS, ErrorStateMatcher } from '@angular/material/core';
-import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatDialog, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatDivider } from '@angular/material/divider';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -12,7 +10,7 @@ import { MatIcon, MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input'
 import { MatSelectModule } from '@angular/material/select';
 import { ApplicationsService } from '../shared/application/applications.service';
-import { confirmPasswordValidator, passwordValidator, urlValidator } from '../shared/validators/validators';
+import { confirmPasswordValidator } from '../shared/validators/validators';
 import { UserService } from '../shared/user.service';
 
 @Component({
@@ -25,11 +23,15 @@ import { UserService } from '../shared/user.service';
 export class NavbarComponent {
   constructor(private applicationsService: ApplicationsService, public dialog: MatDialog) {}
   openSignUpDialog() {
-    this.dialog.open(CreateAccountDialog);
+    this.dialog.open(CreateAccountDialog, {
+      width: '50%',
+    });
   }
 
   openLoginDialog() {
-    this.dialog.open(LoginDialog);
+    this.dialog.open(LoginDialog, {
+      width: '50%',
+    });
   }
 }
 
@@ -55,10 +57,6 @@ export class CreateAccountDialog {
   enteredPassword1: string = '';
   enteredPassword2: string = '';
 
-  // emailFormControl = new FormControl('', [Validators.required, Validators.email, Validators.maxLength(64)]);
-  // passwordFormControl = new FormControl('', [Validators.required, Validators.maxLength(64)]);
-  // password2FormControl = new FormControl('', [Validators.required, passwordValidator(this.enteredPassword1), Validators.maxLength(64)]);
-
   hide = signal(true);
   hide2 = signal(true);
 
@@ -75,14 +73,6 @@ export class CreateAccountDialog {
   matcher = new MyErrorStateMatcher();
 
   applicationClosed: boolean = false;
-
-
-
-  // form: FormGroup = new FormGroup({
-  //   email: new FormControl('', [Validators.required, Validators.email, Validators.maxLength(64)]),
-  //   password1: new FormControl<string>('', [Validators.required]),
-  //   password2: new FormControl<string>('', [Validators.required]),
-  // });
 
   form: FormGroup;
 
@@ -152,16 +142,7 @@ export class CreateAccountDialog {
     console.log('Errors: ' + this.form.errors);
     console.log('Invalid: ' + this.form.invalid);
     this.checkFormErrors(this.form);
-    // if (this.form.invalid) {
-    //   form.control.markAllAsTouched(); // Mark all fields as touched to trigger validation
-    //   return;
-    // }
-    // if (this.enteredPassword1 !== this.enteredPassword2)
-    // {
-    //   this.passwordsAreEqual = false;
-    //   form.control.markAllAsTouched();
-    //   return;
-    // }
+
     console.log("NoMatch: " + this.form.hasError('PasswordNoMatch'));
     if (this.form.invalid)
     {
@@ -179,7 +160,7 @@ export class CreateAccountDialog {
   selector: 'login-dialog',
   templateUrl: 'login-dialog.html',
   standalone: true,
-  imports: [MatDialogModule, MatButtonModule, MatSelectModule, MatInputModule, MatFormFieldModule, ReactiveFormsModule, FormsModule],
+  imports: [MatDialogModule, MatButtonModule, MatSelectModule, MatInputModule, MatFormFieldModule, ReactiveFormsModule, FormsModule, MatIcon],
   providers: [
     provideNativeDateAdapter(),
     {provide: MAT_DATE_FORMATS, useValue: MAT_NATIVE_DATE_FORMATS},
@@ -190,6 +171,13 @@ export class LoginDialog {
 
   enteredEmail: string = '';
   enteredPassword: string = '';
+
+  hide = signal(true);
+
+  clickHide(event: MouseEvent) {
+    this.hide.set(!this.hide());
+    event.stopPropagation();
+  }
 
   form: FormGroup;
 
