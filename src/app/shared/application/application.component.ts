@@ -83,7 +83,7 @@ export class EditAppDialog {
 
   readonly dateApplied = new FormControl(new Date(this.data.dateApplied));
   // readonly dateClosed = (this.data.closed ? new FormControl(new Date(this.data.dateClosed!)) : new FormControl(new Date()));
-  applicationClosed: boolean = (this.data.dateClosed == '0001-01-01');
+  applicationClosed: boolean = (this.data.closedReason != null);
 
   id: number = this.data.id;
 

@@ -37,8 +37,8 @@ export class StatisticsComponent implements OnInit, OnChanges {
 
   get applicationsRatio(): number[] {
     return [
-      this.applications.filter((application) => !(application.dateClosed == '0001-01-01')).length,
-      this.applications.filter((application) => (application.dateClosed == '0001-01-01')).length,
+      this.applications.filter((application) => (application.closedReason == null)).length,
+      this.applications.filter((application) => !(application.closedReason == null)).length,
     ];
   }
 

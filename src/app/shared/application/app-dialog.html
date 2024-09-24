@@ -7,7 +7,7 @@
   <p>Expected pay: {{ data.minPay }}</p>
   } @else {
   <p>Expected pay: {{ data.minPay }} - {{ data.maxPay }}</p>
-  } @if(data.dateClosed == '0001-01-01') {
+  } @if(data.closedReason) {
   <p style="font-weight: bold">CLOSED: {{data.closedReason}}</p>
   }
   <p>

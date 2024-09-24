@@ -51,7 +51,7 @@ export class ApplicationsService {
   }
 
   isApplicationClosed (id: number): boolean {
-    return (this.getApplicationById(id).dateClosed == "0001-01-01")
+    return (this.getApplicationById(id).closedReason != null)
   }
 
   printApplications() {
