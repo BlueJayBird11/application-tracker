@@ -1,13 +1,13 @@
 <h2 mat-dialog-title>{{ data.company }}</h2>
 <mat-dialog-content class="mat-typography">
   <h3>{{ data.position }}</h3>
-  <p>{{ data.type }}</p>
+  <p>{{ data.jobType.name }}</p>
   <p>{{ data.location }}</p>
   @if (data.minPay === data.maxPay) {
   <p>Expected pay: {{ data.minPay }}</p>
   } @else {
   <p>Expected pay: {{ data.minPay }} - {{ data.maxPay }}</p>
-  } @if(data.closed) {
+  } @if(data.dateClosed == '0001-01-01') {
   <p style="font-weight: bold">CLOSED: {{data.closedReason}}</p>
   }
   <p>
@@ -18,7 +18,7 @@
     <a [href]="data.linkToJobPost" target="_blank"> Job Post </a>
   </p>
   }
-  <p>{{ data.descriptionOfJob }}</p>
+  <p>{{ data.description }}</p>
 </mat-dialog-content>
 <mat-dialog-actions align="end">
   <button mat-button mat-dialog-close>Close</button>

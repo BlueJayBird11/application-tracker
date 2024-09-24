@@ -47,6 +47,11 @@
           <mat-option value="Part-Time">Part-Time</mat-option>
           <mat-option value="Internship">Internship</mat-option>
           <mat-option value="Contract">Contract</mat-option>
+          <mat-option value="Temporary">Temporary</mat-option>
+          <mat-option value="Freelance">Freelance</mat-option>
+          <mat-option value="Seasonal">Seasonal</mat-option>
+          <mat-option value="On-Call">On-Call</mat-option>
+          <mat-option value="Apprenticeship">Apprenticeship</mat-option>
         </mat-select>
         @if (type.invalid && (type.dirty || type.touched)) {
         <mat-error> Position Type is required </mat-error>
@@ -219,6 +224,7 @@
           <mat-option value="Declined by self">Declined by self</mat-option>
           <mat-option value="Interview">Interview</mat-option>
           <mat-option value="Accepted">Accepted</mat-option>
+          <mat-option value="No reason given">No reason given</mat-option>
         </mat-select>
         @if (applicationClosed && closedReason.invalid && (closedReason.dirty ||
         closedReason.touched)) {

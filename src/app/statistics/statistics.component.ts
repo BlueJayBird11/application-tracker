@@ -37,19 +37,20 @@ export class StatisticsComponent implements OnInit, OnChanges {
 
   get applicationsRatio(): number[] {
     return [
-      this.applications.filter((application) => !application.closed).length,
-      this.applications.filter((application) => application.closed).length,
+      this.applications.filter((application) => !(application.dateClosed == '0001-01-01')).length,
+      this.applications.filter((application) => (application.dateClosed == '0001-01-01')).length,
     ];
   }
 
   get closedRatio(): number[] {
     return [
-      this.applications.filter((application) => application.closedReason === "Not hiring").length,
-      this.applications.filter((application) => application.closedReason === "Position already filled").length,
-      this.applications.filter((application) => application.closedReason === "Looking for other people").length,
-      this.applications.filter((application) => application.closedReason === "Declined by self").length,
-      this.applications.filter((application) => application.closedReason === "Interview").length,
-      this.applications.filter((application) => application.closedReason === "Accepted").length,
+      this.applications.filter((application) => application.closedReason?.name === "Not hiring").length,
+      this.applications.filter((application) => application.closedReason?.name === "Position already filled").length,
+      this.applications.filter((application) => application.closedReason?.name === "Looking for other people").length,
+      this.applications.filter((application) => application.closedReason?.name === "Declined by self").length,
+      this.applications.filter((application) => application.closedReason?.name === "Interview").length,
+      this.applications.filter((application) => application.closedReason?.name === "Accepted").length,
+      this.applications.filter((application) => application.closedReason?.name === "No reason given").length,
     ];
   }
 
@@ -91,14 +92,15 @@ export class StatisticsComponent implements OnInit, OnChanges {
           'Declined by self',
           'Interview stage',
           'Accepted',
+          'No reason given'
         ],
         datasets: [
           {
             label: '# of Applications',
             data: this.closedRatio,
             borderWidth: 1,
-            backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#E7E9ED', '#4BC0C0', '#9966FF'],
-            borderColor: ['#FF6384', '#36A2EB', '#FFCE56', '#E7E9ED', '#4BC0C0', '#9966FF'],
+            backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#E7E9ED', '#4BC0C0', '#9966FF', '7724AA'],
+            borderColor: ['#FF6384', '#36A2EB', '#FFCE56', '#E7E9ED', '#4BC0C0', '#9966FF', '7724AA'],
           },
         ],
       },

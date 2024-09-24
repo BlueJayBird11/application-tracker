@@ -83,21 +83,21 @@ export class EditAppDialog {
 
   readonly dateApplied = new FormControl(new Date(this.data.dateApplied));
   // readonly dateClosed = (this.data.closed ? new FormControl(new Date(this.data.dateClosed!)) : new FormControl(new Date()));
-  applicationClosed: boolean = this.data.closed;
+  applicationClosed: boolean = (this.data.dateClosed == '0001-01-01');
 
   id: number = this.data.id;
 
   enteredCompany: string = this.data.company;
   enteredPosition: string = this.data.position;
-  enteredType: string = this.data.type;
+  enteredType: string = this.data.jobType.name;
   enteredCity: string = this.data.location.slice(0, this.data.location.length-4);
   enteredState: string = this.data.location.slice(this.data.location.length-2,this.data.location.length);
   enteredMinPay: string = this.data.minPay;
   enteredMaxPay: string = this.data.maxPay;
-  enteredLinkToCompanySite: string = this.data.linkToCompanySite;
-  enteredLinkToJobPost?: string = this.data.linkToJobPost;
-  enteredDescriptionOfJob: string = this.data.descriptionOfJob;
-  enteredClosedReason?: string = this.data.closedReason;
+  enteredLinkToCompanySite: string = ((this.data.linkToCompanySite != null) ? this.data.linkToCompanySite : '');
+  enteredLinkToJobPost?: string = ((this.data.linkToJobPost != null) ? this.data.linkToJobPost : '');
+  enteredDescriptionOfJob: string = this.data.description;
+  enteredClosedReason?: string = this.data.closedReason?.name;
   enteredDateApplied: string = this.data.dateApplied;
   enteredClosedDate: string | undefined = (this.data.dateClosed !== undefined) ? this.data.dateClosed : undefined;
 
@@ -119,17 +119,16 @@ export class EditAppDialog {
       id: this.id,
       company: formData.company,
       position: formData.position,
-      type: formData.type,
+      jobType: formData.type,
       location: formData.city + ", " + formData.state,
       minPay: formData.minPay,
       maxPay: formData.maxPay,
       linkToCompanySite: formData.linkToCompanySite,
       linkToJobPost: (formData.linkToJobPost !== "") ? formData.linkToJobPost : undefined,
-      descriptionOfJob: formData.descriptionOfJob,
-      closed: formData.closed,
+      description: formData.descriptionOfJob,
       closedReason: formData.closedReason,
       dateApplied: this.dateApplied.value?.getFullYear() + "-" + (this.dateApplied.value!.getMonth() + 1) + "-" + (this.dateApplied.value?.getDate()!),
-      dateClosed: (formData.closed) ? this.enteredClosedDate : undefined,
+      dateClosed: (formData.closed) ? this.enteredClosedDate! : '0001-01-01',
     };
 
     console.log(edittedApp);

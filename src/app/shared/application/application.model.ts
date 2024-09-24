@@ -2,31 +2,35 @@ export interface Application {
   id: number,
   company: string,
   position: string,
-  type: 'Full-Time' | 'Part-Time' | 'Internship' | 'Contract' | '',
   location: string,
   minPay: string,
   maxPay: string,
-  linkToCompanySite: string,
-  linkToJobPost?: string,
-  descriptionOfJob: string,
-  closed: boolean,
-  closedReason?: 'Not hiring' | 'Position already filled' | 'Looking for other people' | 'Declined by self' | 'Interview' | 'Accepted',
+  linkToCompanySite: string | null,
+  linkToJobPost: string | null,
+  description: string,
   dateApplied: string,
-  dateClosed?: string
+  dateClosed: string,
+  jobType: {
+    id: number,
+    name: string
+  },
+  closedReason: {
+    id: number,
+    name: string
+  } | null
 }
-
 export interface NewApplicationData {
   company: string,
   position: string,
-  type: 'Full-Time' | 'Part-Time' | 'Internship' | 'Contract' | '',
+  type: string | '',
   location: string,
   minPay: string,
   maxPay: string,
-  linkToCompanySite: string,
-  linkToJobPost?: string,
+  linkToCompanySite: string | '',
+  linkToJobPost: string | '',
   descriptionOfJob: string,
   closed: boolean,
-  closedReason?: 'Not hiring' | 'Position already filled' | 'Looking for other people' | 'Declined by self' | 'Interview' | 'Accepted',
+  closedReason: string | '',
   dateApplied: string,
-  dateClosed?: string
+  dateClosed: string
 }

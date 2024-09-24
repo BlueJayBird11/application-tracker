@@ -22,7 +22,7 @@
     <mat-card-title>{{ application().company }}</mat-card-title>
     <mat-card-subtitle id="position-line"
       >{{ application().position | truncate : 26 }} :
-      {{ application().type }}</mat-card-subtitle
+      {{ application().jobType.name }}</mat-card-subtitle
     >
     <mat-card-subtitle>{{ application().location }}</mat-card-subtitle>
     <mat-card-subtitle
@@ -32,7 +32,7 @@
       }
     </mat-card-subtitle>
     <mat-card-subtitle id="description">
-      {{ application().descriptionOfJob }}
+      {{ application().description }}
     </mat-card-subtitle>
   </mat-card-header>
   <mat-card-actions>

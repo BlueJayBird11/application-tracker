@@ -20,7 +20,7 @@ export class ClosedSectionComponent {
   showAmount = 3;
 
   get applications(): Application[] {
-    return this.applicationsService.getApplications().filter((application) => application.closed);
+    return this.applicationsService.getApplications().filter((application) => (application.dateClosed != '0001-01-01'));
   }
   toggleShow() {
     if (this.showAll)

@@ -32,7 +32,7 @@ export class OngoingSectionComponent {
   showAmount = 3;
 
   get applications(): Application[] {
-    return this.applicationsService.getApplications().filter((application) => !application.closed);
+    return this.applicationsService.getApplications().filter((application) => !(application.closedReason));
   }
   toggleShow() {
     if (this.showAll)
@@ -150,7 +150,7 @@ export class NewAppDialog {
       closed: formData.closed,
       closedReason: formData.closedReason,
       dateApplied: this.dateApplied.value?.getFullYear() + "-" + (this.dateApplied.value!.getMonth()+1) + "-" + this.dateApplied.value?.getDate(),
-      dateClosed: (formData.closed) ? this.enteredClosedDate : undefined,
+      dateClosed: (formData.closed) ? this.enteredClosedDate : '0001-01-01',
     })
 
     // Perform further actions such as saving data to a service or API
