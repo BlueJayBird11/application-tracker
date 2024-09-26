@@ -183,7 +183,6 @@ export class LoginDialog {
 
   constructor(
     public dialogRef: MatDialogRef<CreateAccountDialog>,
-    private applicationsService: ApplicationsService,
     private userService: UserService,
     private fb: FormBuilder,
   ) {
@@ -198,5 +197,7 @@ export class LoginDialog {
       form.control.markAllAsTouched(); // Mark all fields as touched to trigger validation
       return;
     }
+    console.log(form.value);
+    this.userService.login(form.value.email, form.value.password);
   }
 }

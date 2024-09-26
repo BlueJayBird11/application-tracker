@@ -21,13 +21,15 @@
       <mat-form-field>
         <mat-label>Enter your password</mat-label>
         <input
+          required
           matInput
-          id="password1"
-          formControlName="password1"
+          id="password"
+          name="password"
+          [(ngModel)]="enteredPassword"
+          #password="ngModel"
           [type]="hide() ? 'password' : 'text'"
         />
         <button
-          required
           mat-icon-button
           matSuffix
           (click)="clickHide($event)"

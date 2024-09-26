@@ -34,3 +34,8 @@ export interface NewApplicationData {
   dateApplied: string,
   dateClosed: string
 }
+
+export interface ApplicationSubData {
+  id: number,
+  name: string
+}

@@ -1,3 +1,4 @@
 export interface UserInfo {
-  id: string
+  id: string,
+  sessionToken: string
 }

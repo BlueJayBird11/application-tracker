@@ -119,14 +119,20 @@ export class EditAppDialog {
       id: this.id,
       company: formData.company,
       position: formData.position,
-      jobType: formData.type,
+      jobType: {
+        id: 0,
+        name: formData.type
+      },
       location: formData.city + ", " + formData.state,
       minPay: formData.minPay,
       maxPay: formData.maxPay,
       linkToCompanySite: formData.linkToCompanySite,
       linkToJobPost: (formData.linkToJobPost !== "") ? formData.linkToJobPost : undefined,
       description: formData.descriptionOfJob,
-      closedReason: formData.closedReason,
+      closedReason: {
+        id: 0,
+        name: formData.closedReason
+      },
       dateApplied: this.dateApplied.value?.getFullYear() + "-" + (this.dateApplied.value!.getMonth() + 1) + "-" + (this.dateApplied.value?.getDate()!),
       dateClosed: (formData.closed) ? this.enteredClosedDate! : '0001-01-01',
     };

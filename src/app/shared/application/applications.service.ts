@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
-import { Application, NewApplicationData } from './application.model';
+import { Application, ApplicationSubData, NewApplicationData } from './application.model';
 import * as Papa from 'papaparse';
 import { UserService } from '../user.service';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root'
@@ -9,7 +10,78 @@ import { UserService } from '../user.service';
 // https://drive.google.com/file/d/1NgL_RpbuDEcW5Fimhmkj3U-BGHF0sAAb/view
 export class ApplicationsService {
   private applications: Application[] = [];
-  constructor() {
+
+  private closedReasons: ApplicationSubData[] = [
+    {
+      "id": 1,
+      "name": "Not hiring"
+    },
+    {
+      "id": 2,
+      "name": "Position already filled"
+    },
+    {
+      "id": 3,
+      "name": "Looking for other people"
+    },
+    {
+      "id": 4,
+      "name": "Declined by self"
+    },
+    {
+      "id": 5,
+      "name": "Interview"
+    },
+    {
+      "id": 6,
+      "name": "Accepted"
+    },
+    {
+      "id": 7,
+      "name": "No reason given"
+    }
+  ]
+
+  private jobTypes: ApplicationSubData[] = [
+    {
+      "id": 1,
+      "name": "Full-Time"
+    },
+    {
+      "id": 2,
+      "name": "Part-Time"
+    },
+    {
+      "id": 3,
+      "name": "Internship"
+    },
+    {
+      "id": 4,
+      "name": "Contract"
+    },
+    {
+      "id": 5,
+      "name": "Temporary"
+    },
+    {
+      "id": 6,
+      "name": "Freelance"
+    },
+    {
+      "id": 7,
+      "name": "Seasonal"
+    },
+    {
+      "id": 8,
+      "name": "On-Call"
+    },
+    {
+      "id": 9,
+      "name": "Apprenticeship"
+    }
+  ]
+
+  constructor(private http: HttpClient, private userService: UserService) {
 
   }
 
@@ -85,8 +157,53 @@ export class ApplicationsService {
     });
   }
 
+  updateApplication(updatedApplication: Application, jobTypeId: number, closedReasonId: number): boolean {
+    const url = 'https://localhost:7187/api/JobApplication/' + updatedApplication.id;
+    const params = {
+      applicationId: updatedApplication.id,
+      userId: this.userService.user.id,
+      jobTypeId: jobTypeId,
+      closedReasonId: closedReasonId,
+      sessionKey: this.userService.user.sessionToken
+    };
+
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'accept': '*/*'
+    });
+
+    const body = {
+      id: updatedApplication.id,
+      company: updatedApplication.company,
+      position: updatedApplication.position,
+      location: updatedApplication.location,
+      minPay: updatedApplication.minPay,
+      maxPay: updatedApplication.maxPay,
+      linkToCompanySite: updatedApplication.linkToCompanySite,
+      linkToJobPost: updatedApplication.linkToJobPost,
+      description: updatedApplication.description,
+      dateApplied: updatedApplication.dateApplied,
+      dateClosed: updatedApplication.dateClosed
+    };
+
+    this.http.put(url, body, { headers, params })
+      .subscribe(
+        response => {
+          console.log('Job application updated successfully', response);
+          return true;
+        },
+        error => {
+          console.error('Error updating job application', error);
+          return false;
+        }
+      );
+
+      return false;
+  }
+
   editApplication(applicationData: Application) {
     // Contact server and tell them to edit this application
+    // if (!this.updateApplication(applicationData, 1, 1))
 
     for (let application of this.applications) {
       if (application.id === applicationData.id) {
@@ -205,7 +322,7 @@ export class ApplicationsService {
         minPay: '$122k/yr',
         maxPay: '$122k/yr',
         linkToCompanySite: 'https://www.microsoft.com/en-us',
-        linkToJobPost: 'https://jobs.careers.microsoft.com/global/en/share/1731080/?utm_source=Job Share&utm_campaign=Copy-job-share',
+        linkToJobPost: 'https://jobs.careers.microsoft.com/global/en/share/1731080/?utm_source=JobShare&utm_campaign=Copy-job-share',
         description: 'The Industry Solutions Engineering (ISE) team is a global engineering organization that works directly with customers looking to leverage the latest technologies to address their toughest challenges. We work closely with our customers’ engineers to jointly develop code for cloud-based solutions that can accelerate their organization. We work in collaboration with Microsoft product teams, partners, and open-source communities to empower our customers to do more with the cloud. We pride ourselves in making contributions to open source and making our platforms easier to use.',
         dateApplied: '2024-6-15',
         dateClosed: '0001-01-01',

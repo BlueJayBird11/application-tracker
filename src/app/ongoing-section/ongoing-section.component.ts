@@ -124,14 +124,20 @@ export class NewAppDialog {
     console.log('Form data:', {
       company: formData.company,
       position: formData.position,
-      type: formData.type,
+      type: {
+        id: 0,
+        name: formData.type
+      },
       location: formData.city + ", " + formData.state,
       minPay: formData.minPay,
       maxPay: formData.maxPay,
       linkToCompanySite: formData.linkToCompanySite,
       linkToJobPost: (formData.linkToJobPost !== "") ? formData.linkToJobPost : undefined,
       descriptionOfJob: formData.descriptionOfJob,
-      closed: formData.closed,
+      closed: {
+        id: 0,
+        name: formData.closed
+      },
       closedReason: formData.closedReason,
       dateApplied: this.dateApplied.value?.getFullYear() + "-" + (this.dateApplied.value!.getMonth()+1) + "-" + this.dateApplied.value?.getDate(),
       dateClosed: (formData.closed) ? this.dateClosed.value?.getFullYear() + "-" + (this.dateClosed.value!.getMonth()+1) + "-" + this.dateClosed.value?.getDate() : undefined,
