@@ -22,7 +22,11 @@ export class StatisticsComponent implements OnInit, OnChanges {
   constructor(private applicationsService: ApplicationsService) {}
 
   ngOnInit() {
-    this.applications = this.applicationsService.getApplications();
+    // this.applications = this.applicationsService.getApplications();
+    this.applicationsService.applications$.subscribe(status => {
+      this.applications = status;
+      this.updateCharts();
+    })
     this.initializeCharts();
   }
 
@@ -130,7 +134,7 @@ export class StatisticsComponent implements OnInit, OnChanges {
   }
 
   export(): void {
-    const applications = this.applicationsService.getApplications();
-    this.applicationsService.exportToCsv(applications);
+    // const applications = this.applicationsService.getApplications();
+    this.applicationsService.exportToCsv(this.applications);
   }
 }

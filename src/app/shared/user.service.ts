@@ -43,10 +43,13 @@ export class UserService {
 
       try {
         const response = await this.http.get<{userId: number, sessionKey: string}>(url, { headers, params }).toPromise()
-        // console.log('login successful', response);
+        console.log('login successful', response);
         // localStorage.setItem('userId', re);
         const userId = response!.userId;
         const sessionToken = response!.sessionKey;
+
+        console.log(userId);
+        console.log(sessionToken);
         // this.user.id = userId;
         // this.user.sessionToken = sessionToken;
 

@@ -27,13 +27,20 @@ import { urlValidator } from '../shared/validators/validators';
   styleUrl: './ongoing-section.component.css'
 })
 export class OngoingSectionComponent {
+  applications: Application[] = [];
   constructor(private applicationsService: ApplicationsService, public dialog: MatDialog) {}
   showAll: boolean = false;
   showAmount = 3;
 
-  get applications(): Application[] {
-    return this.applicationsService.getApplications().filter((application) => !(application.closedReason));
+  ngOnInit() {
+    this.applicationsService.applications$.subscribe(status => {
+      this.applications = status.filter((application) => !(application.closedReason));
+    })
   }
+
+  // get applications(): Application[] {
+  //   return this.applicationsService.getApplications().filter((application) => !(application.closedReason));
+  // }
   toggleShow() {
     if (this.showAll)
     {

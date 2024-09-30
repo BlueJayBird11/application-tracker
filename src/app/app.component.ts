@@ -38,7 +38,7 @@ export class AppComponent {
       if (!this.isLoggedIn) {
         this.applicationsService.useDefaultData();
       } else {
-        this.applicationsService.retrieveApplications(this.user.id);
+        this.applicationsService.retrieveApplications(this.user.id, this.user.sessionToken);
       }
     });
   }

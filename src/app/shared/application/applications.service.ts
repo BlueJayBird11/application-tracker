@@ -4,13 +4,17 @@ import * as Papa from 'papaparse';
 import { UserService } from '../user.service';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { UserInfo } from '../user.model';
+import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 // https://drive.google.com/file/d/1NgL_RpbuDEcW5Fimhmkj3U-BGHF0sAAb/view
 export class ApplicationsService {
-  private applications: Application[] = [];
+  // private applications: Application[] = [];
+  private applications = new BehaviorSubject<Application[]>([]);
+  public applications$ = this.applications.asObservable();
+
   isLoggedIn: boolean = false;
   user: UserInfo = {
     id: 0,
@@ -30,6 +34,8 @@ export class ApplicationsService {
       this.user.id = status.id;
       this.user.sessionToken = status.sessionToken;
     });
+
+    console.log(this.user);
   }
 
   private closedReasons: ApplicationSubData[] = [
@@ -106,9 +112,9 @@ export class ApplicationsService {
     return subList.filter(item => item.name == name)[0].id;
   }
 
-  getApplications(): Application[] {
-    return this.applications;
-  }
+  // getApplications(): Application[] {
+  //   return this.applications;
+  // }
 
   getApplicationById (id: number): Application
   {
@@ -131,7 +137,7 @@ export class ApplicationsService {
       closedReason: null
     }
     console.log(id);
-    const foundApplication = this.applications.find((application) => application.id === id);
+    const foundApplication = this.applications.getValue().find((application) => application.id === id);
 
     if (foundApplication)
     {
@@ -161,8 +167,10 @@ export class ApplicationsService {
     console.log("jobTypeId: " + jobTypeId);
     console.log("closedReasonId: " + closedReasonId);
 
-    this.applications.push({
-      id: this.applications.length+1,
+    let tempList: Application[] = this.applications.getValue();
+
+    tempList.push({
+      id: this.applications.getValue().length+1,
       company: applicationData.company,
       position: applicationData.position,
       jobType: {
@@ -181,7 +189,9 @@ export class ApplicationsService {
       } : null,
       dateApplied: applicationData.dateApplied,
       dateClosed: applicationData.dateClosed,
-    });
+    })
+
+    this.applications.next(tempList);
   }
 
   updateApplication(updatedApplication: Application, jobTypeId: number, closedReasonId: number): boolean {
@@ -242,7 +252,7 @@ export class ApplicationsService {
       return
     }
 
-    for (let application of this.applications) {
+    for (let application of this.applications.getValue()) {
       if (application.id === applicationData.id) {
         application.company = applicationData.company;
         application.position = applicationData.position;
@@ -264,8 +274,8 @@ export class ApplicationsService {
   deleteApplicationById(id: number)
   {
     // contact server
-
-    this.applications = this.applications.filter((application) => application.id !== id);
+    let tempList: Application[] = this.applications.getValue().filter((application) => application.id !== id);
+    this.applications.next(tempList);
   }
 
   exportToCsv(applications: Application[]): void {
@@ -302,12 +312,13 @@ export class ApplicationsService {
     URL.revokeObjectURL(url);
   }
 
-  retrieveApplications(userId: number) {
-    this.applications = []
+  async retrieveApplications(userId: number, sessionToken: string) {
+    console.log("HERE: " + this.user.id);
+    this.applications.next([]);
     // retrieve user's applications from server
     const url = `https://localhost:7187/api/User/${userId}/applications`;
     const params = {
-      sessionKey: this.user.sessionToken
+      sessionKey: sessionToken
     };
 
     const headers = new HttpHeaders({
@@ -315,19 +326,27 @@ export class ApplicationsService {
       'accept': '*/*'
     });
 
-    this.http.get(url, { headers, params })
-      .subscribe(
-        response => {
-          console.log('Job applications retrieved successfully', response);
-        },
-        error => {
-          console.error('Error retrieved job applications', error);
-        }
-      );
+    // this.http.get(url, { headers, params })
+    //   .subscribe(
+    //     response => {
+    //       console.log('Job applications retrieved successfully', response);
+    //     },
+    //     error => {
+    //       console.error('Error retrieved job applications', error);
+    //     }
+    //   );
+    try {
+      const response = await this.http.get<Application[]>(url, { headers, params }).toPromise()
+      console.log('Job applications retrieved successfully', response);
+      this.applications.next(response!);
+
+    } catch (error) {
+      console.error('Error retrieved job applications', error);
+    }
   }
 
   useDefaultData() {
-    this.applications = [
+    this.applications.next([
       {
         id: 1,
         company: 'Meta',
@@ -421,6 +440,6 @@ export class ApplicationsService {
         dateClosed: '0001-01-01',
         closedReason: null
       }
-    ];
+    ]);
   }
 }

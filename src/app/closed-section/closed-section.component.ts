@@ -15,13 +15,21 @@ import { ApplicationComponent } from '../shared/application/application.componen
   styleUrl: './closed-section.component.css'
 })
 export class ClosedSectionComponent {
+  applications: Application[] = [];
+
   constructor(private applicationsService: ApplicationsService) {}
   showAll: boolean = false;
   showAmount = 3;
 
-  get applications(): Application[] {
-    return this.applicationsService.getApplications().filter((application) => (application.closedReason));
+  ngOnInit() {
+    this.applicationsService.applications$.subscribe(status => {
+      this.applications = status.filter((application) => (application.closedReason));
+    })
   }
+
+  // get applications(): Application[] {
+  //   return this.applicationsService.getApplications().filter((application) => (application.closedReason));
+  // }
   toggleShow() {
     if (this.showAll)
     {
