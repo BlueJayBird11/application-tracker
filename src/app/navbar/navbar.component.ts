@@ -44,6 +44,10 @@ export class NavbarComponent {
       width: '50%',
     });
   }
+
+  onClickSignOut() {
+    this.userService.signOut();
+  }
 }
 
 export class MyErrorStateMatcher implements ErrorStateMatcher {

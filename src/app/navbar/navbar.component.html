@@ -16,7 +16,7 @@
       <a mat-button (click)="openLoginDialog()">Log In</a>
       <a mat-raised-button (click)="openSignUpDialog()">Sign Up</a>
       } @else {
-      <a mat-button>Sign Out</a>
+      <a mat-button (click)="onClickSignOut()">Sign Out</a>
       }
     </div>
   </nav>

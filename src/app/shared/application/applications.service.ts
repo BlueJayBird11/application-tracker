@@ -3,6 +3,7 @@ import { Application, ApplicationSubData, NewApplicationData } from './applicati
 import * as Papa from 'papaparse';
 import { UserService } from '../user.service';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { UserInfo } from '../user.model';
 
 @Injectable({
   providedIn: 'root'
@@ -10,9 +11,25 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 // https://drive.google.com/file/d/1NgL_RpbuDEcW5Fimhmkj3U-BGHF0sAAb/view
 export class ApplicationsService {
   private applications: Application[] = [];
+  isLoggedIn: boolean = false;
+  user: UserInfo = {
+    id: 0,
+    sessionToken: ''
+  }
 
   constructor(private http: HttpClient, private userService: UserService) {
 
+  }
+
+  ngOnInit(): void {
+    this.userService.loggedIn$.subscribe(status => {
+      this.isLoggedIn = status;
+    });
+
+    this.userService.user$.subscribe(status => {
+      this.user.id = status.id;
+      this.user.sessionToken = status.sessionToken;
+    });
   }
 
   private closedReasons: ApplicationSubData[] = [
@@ -171,10 +188,10 @@ export class ApplicationsService {
     const url = 'https://localhost:7187/api/JobApplication/' + updatedApplication.id;
     const params = {
       applicationId: updatedApplication.id,
-      userId: this.userService.user.id,
+      userId: this.user.id,
       jobTypeId: jobTypeId,
       closedReasonId: closedReasonId,
-      sessionKey: this.userService.user.sessionToken
+      sessionKey: this.user.sessionToken
     };
 
     const headers = new HttpHeaders({
@@ -290,7 +307,7 @@ export class ApplicationsService {
     // retrieve user's applications from server
     const url = `https://localhost:7187/api/User/${userId}/applications`;
     const params = {
-      sessionKey: this.userService.user.sessionToken
+      sessionKey: this.user.sessionToken
     };
 
     const headers = new HttpHeaders({

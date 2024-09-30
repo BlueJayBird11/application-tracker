@@ -9,6 +9,7 @@ import { ClosedSectionComponent } from "./closed-section/closed-section.componen
 import { StatisticsComponent } from './statistics/statistics.component';
 import { ApplicationsService } from './shared/application/applications.service';
 import { UserService } from './shared/user.service';
+import { UserInfo } from './shared/user.model';
 
 @Component({
   selector: 'app-root',
@@ -20,16 +21,24 @@ import { UserService } from './shared/user.service';
 export class AppComponent {
   title = 'application-tracker';
   isLoggedIn: boolean = false;
+  user: UserInfo = {
+    id: 0,
+    sessionToken: ''
+  }
 
   constructor(private applicationsService: ApplicationsService, private userService: UserService) {}
 
   ngOnInit(): void {
+    this.userService.user$.subscribe(status => {
+      this.user.id = status.id;
+      this.user.sessionToken = status.sessionToken;
+    });
     this.userService.loggedIn$.subscribe(status => {
       this.isLoggedIn = status;
       if (!this.isLoggedIn) {
         this.applicationsService.useDefaultData();
       } else {
-        this.applicationsService.retrieveApplications(this.userService.user.id);
+        this.applicationsService.retrieveApplications(this.user.id);
       }
     });
   }
