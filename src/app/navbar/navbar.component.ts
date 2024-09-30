@@ -21,7 +21,18 @@ import { UserService } from '../shared/user.service';
   styleUrl: './navbar.component.css'
 })
 export class NavbarComponent {
-  constructor(private applicationsService: ApplicationsService, public dialog: MatDialog) {}
+  isLoggedIn: boolean = false;
+
+  constructor(private applicationsService: ApplicationsService,
+    private userService: UserService,
+    public dialog: MatDialog) {}
+
+  ngOnInit(): void {
+    this.userService.loggedIn$.subscribe(status => {
+      this.isLoggedIn = status;
+    })
+  }
+
   openSignUpDialog() {
     this.dialog.open(CreateAccountDialog, {
       width: '50%',
@@ -192,12 +203,27 @@ export class LoginDialog {
     });
   }
 
-  onSignUpButtonClick(form: NgForm) {
+  isLoggedIn = this.userService.isLoggedIn();
+
+  async onLoginButtonClick(form: NgForm) {
     if (form.invalid) {
       form.control.markAllAsTouched(); // Mark all fields as touched to trigger validation
       return;
     }
     console.log(form.value);
-    this.userService.login(form.value.email, form.value.password);
+
+    try {
+      const success: boolean = await this.userService.login(form.value.email, form.value.password);
+
+      if (success) {
+        console.log("Navbar: Login Successful");
+        this.dialogRef.close();
+      } else {
+        // Display error
+        console.log("Navbar: Error logging in");
+      }
+    } catch (error) {
+      console.error("Navbar: An error occurred while logging in", error);
+    }
   }
 }

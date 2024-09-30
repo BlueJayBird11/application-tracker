@@ -134,11 +134,11 @@ export class NewAppDialog {
       linkToCompanySite: formData.linkToCompanySite,
       linkToJobPost: (formData.linkToJobPost !== "") ? formData.linkToJobPost : undefined,
       descriptionOfJob: formData.descriptionOfJob,
-      closed: {
+      closed: formData.closed,
+      closedReason: {
         id: 0,
-        name: formData.closed
+        name: formData.closedReason
       },
-      closedReason: formData.closedReason,
       dateApplied: this.dateApplied.value?.getFullYear() + "-" + (this.dateApplied.value!.getMonth()+1) + "-" + this.dateApplied.value?.getDate(),
       dateClosed: (formData.closed) ? this.dateClosed.value?.getFullYear() + "-" + (this.dateClosed.value!.getMonth()+1) + "-" + this.dateClosed.value?.getDate() : undefined,
     });

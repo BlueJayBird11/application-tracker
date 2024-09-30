@@ -1,6 +1,6 @@
 <app-navbar />
 <br />
-@if (isLoggedIn()) {
+@if (!isLoggedIn) {
 <p>Filler data, login to put in your own data</p>
 }
 <app-statistics></app-statistics>

@@ -1,4 +1,4 @@
 export interface UserInfo {
-  id: string,
+  id: number,
   sessionToken: string
 }

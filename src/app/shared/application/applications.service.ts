@@ -11,6 +11,10 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 export class ApplicationsService {
   private applications: Application[] = [];
 
+  constructor(private http: HttpClient, private userService: UserService) {
+
+  }
+
   private closedReasons: ApplicationSubData[] = [
     {
       "id": 1,
@@ -81,8 +85,8 @@ export class ApplicationsService {
     }
   ]
 
-  constructor(private http: HttpClient, private userService: UserService) {
-
+  findIdByName(name: string, subList: ApplicationSubData[]): number {
+    return subList.filter(item => item.name == name)[0].id;
   }
 
   getApplications(): Application[] {
@@ -134,6 +138,12 @@ export class ApplicationsService {
   {
     // Contact server and tell them to add a application
 
+    let jobTypeId: number = this.findIdByName(applicationData.type, this.jobTypes);
+    let closedReasonId: number = ((applicationData.closedReason != undefined) ? this.findIdByName(applicationData.closedReason, this.closedReasons) : 0);
+
+    console.log("jobTypeId: " + jobTypeId);
+    console.log("closedReasonId: " + closedReasonId);
+
     this.applications.push({
       id: this.applications.length+1,
       company: applicationData.company,
@@ -148,10 +158,10 @@ export class ApplicationsService {
       linkToCompanySite: applicationData.linkToCompanySite,
       linkToJobPost: applicationData.linkToJobPost,
       description: applicationData.descriptionOfJob,
-      closedReason: {
+      closedReason: (applicationData.closed) ? {
         id: 0,
-        name: applicationData.closedReason
-      },
+        name:  applicationData.closedReason
+      } : null,
       dateApplied: applicationData.dateApplied,
       dateClosed: applicationData.dateClosed,
     });
@@ -203,7 +213,17 @@ export class ApplicationsService {
 
   editApplication(applicationData: Application) {
     // Contact server and tell them to edit this application
-    // if (!this.updateApplication(applicationData, 1, 1))
+
+    let jobTypeId: number = this.findIdByName(applicationData.jobType.name, this.jobTypes);
+    let closedReasonId: number = ((applicationData.closedReason?.name != undefined) ? this.findIdByName(applicationData.closedReason.name, this.closedReasons) : 0);
+    // console.log("jobTypeId: " + jobTypeId);
+    // console.log("closedReasonId: " + closedReasonId);
+
+    if (!this.updateApplication(applicationData, jobTypeId, closedReasonId))
+    {
+      console.log("Error updating application");
+      return
+    }
 
     for (let application of this.applications) {
       if (application.id === applicationData.id) {
@@ -265,8 +285,28 @@ export class ApplicationsService {
     URL.revokeObjectURL(url);
   }
 
-  retrieveApplications(userId: string) {
+  retrieveApplications(userId: number) {
+    this.applications = []
     // retrieve user's applications from server
+    const url = `https://localhost:7187/api/User/${userId}/applications`;
+    const params = {
+      sessionKey: this.userService.user.sessionToken
+    };
+
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'accept': '*/*'
+    });
+
+    this.http.get(url, { headers, params })
+      .subscribe(
+        response => {
+          console.log('Job applications retrieved successfully', response);
+        },
+        error => {
+          console.error('Error retrieved job applications', error);
+        }
+      );
   }
 
   useDefaultData() {
