@@ -13,7 +13,7 @@ import { Application } from '../shared/application/application.model';
   templateUrl: './statistics.component.html',
   styleUrl: './statistics.component.css'
 })
-export class StatisticsComponent implements OnInit, OnChanges {
+export class StatisticsComponent implements OnInit {
   chart: any = [];
   chart2: any = [];
   applications: Application[] = [];
@@ -23,15 +23,11 @@ export class StatisticsComponent implements OnInit, OnChanges {
 
   ngOnInit() {
     // this.applications = this.applicationsService.getApplications();
+    this.initializeCharts();
     this.applicationsService.applications$.subscribe(status => {
       this.applications = status;
       this.updateCharts();
     })
-    this.initializeCharts();
-  }
-
-  ngOnChanges() {
-    this.updateCharts();
   }
 
   toggleShow() {

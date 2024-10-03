@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { ChangeDetectorRef, Injectable } from '@angular/core';
 import { Application, ApplicationSubData, NewApplicationData } from './application.model';
 import * as Papa from 'papaparse';
 import { UserService } from '../user.service';
@@ -15,28 +15,28 @@ export class ApplicationsService {
   private applications = new BehaviorSubject<Application[]>([]);
   public applications$ = this.applications.asObservable();
 
-  isLoggedIn: boolean = false;
-  user: UserInfo = {
-    id: 0,
-    sessionToken: ''
-  }
+  // isLoggedIn: boolean = false;
+  // user: UserInfo = {
+  //   id: 0,
+  //   sessionToken: ''
+  // }
 
   constructor(private http: HttpClient, private userService: UserService) {
 
   }
 
-  ngOnInit(): void {
-    this.userService.loggedIn$.subscribe(status => {
-      this.isLoggedIn = status;
-    });
+  // ngOnInit(): void {
+  //   this.userService.user$.subscribe(status => {
+  //     this.user.id = status.id;
+  //     this.user.sessionToken = status.sessionToken;
+  //     // this.cd.detectChanges();
+  //   });
 
-    this.userService.user$.subscribe(status => {
-      this.user.id = status.id;
-      this.user.sessionToken = status.sessionToken;
-    });
-
-    console.log(this.user);
-  }
+  //   this.userService.loggedIn$.subscribe(status => {
+  //     this.isLoggedIn = status;
+  //     // this.cd.detectChanges();
+  //   });
+  // }
 
   private closedReasons: ApplicationSubData[] = [
     {
@@ -157,16 +157,58 @@ export class ApplicationsService {
     console.log(this.applications);
   }
 
-  addApplication(applicationData: NewApplicationData)
-  {
-    // Contact server and tell them to add a application
+  async createApplication(applicationData: NewApplicationData, jobTypeId: number, closedReasonId: number, user: UserInfo) : Promise<boolean> {
+    const url = 'https://localhost:7187/api/JobApplication';
+    const params = {
+      userId: user.id,
+      jobTypeId: jobTypeId,
+      closedReasonId: closedReasonId,
+      sessionKey: user.sessionToken
+    };
 
-    let jobTypeId: number = this.findIdByName(applicationData.type, this.jobTypes);
-    let closedReasonId: number = ((applicationData.closedReason != undefined) ? this.findIdByName(applicationData.closedReason, this.closedReasons) : 0);
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'accept': '*/*'
+    });
 
-    console.log("jobTypeId: " + jobTypeId);
-    console.log("closedReasonId: " + closedReasonId);
+    const body = {
+      company: applicationData.company,
+      position: applicationData.position,
+      location: applicationData.location,
+      minPay: applicationData.minPay,
+      maxPay: applicationData.maxPay,
+      linkToCompanySite: applicationData.linkToCompanySite,
+      linkToJobPost: applicationData.linkToJobPost,
+      description: applicationData.descriptionOfJob,
+      dateApplied: applicationData.dateApplied,
+      dateClosed: applicationData.dateClosed
+    };
 
+    // this.http.put(url, body, { headers, params })
+    //   .subscribe(
+    //     response => {
+    //       console.log('Job application updated successfully', response);
+    //       return true;
+    //     },
+    //     error => {
+    //       console.error('Error updating job application', error);
+    //       return false;
+    //     }
+    //   );
+    // return true;
+
+    try {
+      const response = await this.http.post<{userId: number, sessionKey: string}>(url, body, { headers, params, responseType: 'text' as 'json' }).toPromise()
+      console.log('application posted: ', response);
+      // localStorage.setItem('userId', re);
+      return true;
+    } catch (error) {
+      console.error('Creating Application', error);
+      return false;
+    }
+  }
+
+  pushToApplications(applicationData: NewApplicationData, user: UserInfo) {
     let tempList: Application[] = this.applications.getValue();
 
     tempList.push({
@@ -194,14 +236,72 @@ export class ApplicationsService {
     this.applications.next(tempList);
   }
 
-  updateApplication(updatedApplication: Application, jobTypeId: number, closedReasonId: number): boolean {
+  // make sure that format is YYYY-MM-DD
+  fixDate(date: string) : string {
+    // console.log(applicationData.dateApplied);
+    let newDate: string = date;
+    if (date.length === 9) {
+      // Two possible cases to handle:
+      // 1. 0000-10-1  => 0000-10-01
+      // 2. 0000-1-10  => 0000-01-10
+
+      if (date.charAt(6) === '-') {
+        // Handle case where month is single digit (0000-1-10)
+        newDate = date.slice(0, 5) + '0' + date.slice(5);
+      } else if (date.charAt(7) === '-') {
+        // Handle case where day is single digit (0000-10-1)
+        newDate = date.slice(0, 8) + '0' + date.slice(8);
+      }
+    }
+
+    if (date.length === 8) {
+      // This should handle cases like 0000-1-1 => 0000-01-01
+      newDate = date.slice(0, 5) + '0' + date.slice(5, 7) + '0' + date.slice(7);
+    }
+
+    return newDate;
+  }
+
+  async addApplication(applicationData: NewApplicationData, user: UserInfo)
+  {
+    // Contact server and tell them to add a application
+
+    let jobTypeId: number = this.findIdByName(applicationData.type, this.jobTypes);
+    let closedReasonId: number = ((applicationData.closedReason != undefined) ? this.findIdByName(applicationData.closedReason, this.closedReasons) : 0);
+
+    console.log("jobTypeId: " + jobTypeId);
+    console.log("closedReasonId: " + closedReasonId);
+
+    applicationData.dateApplied = this.fixDate(applicationData.dateApplied);
+    applicationData.dateClosed = this.fixDate(applicationData.dateClosed);
+
+    console.log(applicationData);
+    console.log(user.sessionToken);
+    console.log(user.id);
+
+    if (user.id == 0) // !this.isLoggedIn
+    {
+      console.log("Not logged in")
+      // this.addApplication(applicationData);
+      return;
+    }
+
+    let creationSuccessfull = await this.createApplication(applicationData, jobTypeId, closedReasonId, user);
+
+    if (creationSuccessfull)
+    {
+      this.pushToApplications(applicationData, user);
+    }
+  }
+
+  updateApplication(updatedApplication: Application, jobTypeId: number, closedReasonId: number, user: UserInfo): boolean {
     const url = 'https://localhost:7187/api/JobApplication/' + updatedApplication.id;
     const params = {
       applicationId: updatedApplication.id,
-      userId: this.user.id,
+      userId: user.id,
       jobTypeId: jobTypeId,
       closedReasonId: closedReasonId,
-      sessionKey: this.user.sessionToken
+      sessionKey: user.sessionToken
     };
 
     const headers = new HttpHeaders({
@@ -246,13 +346,15 @@ export class ApplicationsService {
     // console.log("jobTypeId: " + jobTypeId);
     // console.log("closedReasonId: " + closedReasonId);
 
-    if (!this.updateApplication(applicationData, jobTypeId, closedReasonId))
-    {
-      console.log("Error updating application");
-      return
-    }
+    // if (!this.updateApplication(applicationData, jobTypeId, closedReasonId))
+    // {
+    //   console.log("Error updating application");
+    //   return
+    // }
 
-    for (let application of this.applications.getValue()) {
+    let tempList: Application[] = this.applications.getValue();
+
+    for (let application of tempList) {
       if (application.id === applicationData.id) {
         application.company = applicationData.company;
         application.position = applicationData.position;
@@ -269,6 +371,8 @@ export class ApplicationsService {
         break;
       }
     }
+
+    this.applications.next(tempList);
   }
 
   deleteApplicationById(id: number)
@@ -313,7 +417,6 @@ export class ApplicationsService {
   }
 
   async retrieveApplications(userId: number, sessionToken: string) {
-    console.log("HERE: " + this.user.id);
     this.applications.next([]);
     // retrieve user's applications from server
     const url = `https://localhost:7187/api/User/${userId}/applications`;

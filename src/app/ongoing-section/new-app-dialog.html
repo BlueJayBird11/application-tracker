@@ -142,10 +142,6 @@
           [(ngModel)]="enteredLinkToCompanySite"
           #linkToCompanySite="ngModel"
         />
-        @if (linkToCompanySite.invalid && (linkToCompanySite.dirty ||
-        linkToCompanySite.touched)) {
-        <mat-error> Maximum Pay is required </mat-error>
-        }
       </mat-form-field>
     </p>
     <p>
@@ -156,6 +152,7 @@
           placeholder="https://www.google.com/"
           name="linkToJobPost"
           [(ngModel)]="enteredLinkToJobPost"
+          #linkToJobPost="ngModel"
         />
       </mat-form-field>
     </p>
@@ -241,7 +238,7 @@
           name="dateClosed"
           [disabled]="!applicationClosed"
           [required]="applicationClosed"
-          [(ngModel)]="enteredClosedDate"
+          [(ngModel)]="enteredDateClosed"
           #dateClosed="ngModel"
         />
         <mat-datepicker-toggle

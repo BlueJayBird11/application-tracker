@@ -17,6 +17,8 @@ import { type Application } from './../shared/application/application.model';
 import { ApplicationsService } from '../shared/application/applications.service';
 import { ApplicationComponent } from '../shared/application/application.component';
 import { urlValidator } from '../shared/validators/validators';
+import { UserInfo } from '../shared/user.model';
+import { UserService } from '../shared/user.service';
 
 
 @Component({
@@ -69,6 +71,19 @@ export class OngoingSectionComponent {
   ],
 })
 export class NewAppDialog {
+  user: UserInfo = {
+    id: 0,
+    sessionToken: ''
+  }
+
+  ngOnInit(): void {
+    this.userService.user$.subscribe(status => {
+      this.user.id = status.id;
+      this.user.sessionToken = status.sessionToken;
+    });
+  }
+
+
   readonly dateApplied = new FormControl(new Date());
   readonly dateClosed = new FormControl(new Date());
   applicationClosed: boolean = false;
@@ -81,17 +96,18 @@ export class NewAppDialog {
   enteredMinPay: string = '';
   enteredMaxPay: string = '';
   enteredLinkToCompanySite: string = '';
-  enteredLinkToJobPost?: string = '';
+  enteredLinkToJobPost: string = '';
   enteredDescriptionOfJob: string = '';
   enteredClosedReason?: string;
   enteredDateApplied: string = '';
-  enteredClosedDate: string = '';
+  enteredDateClosed: string = '';
 
   form: FormGroup;
 
   constructor(
     public dialogRef: MatDialogRef<NewAppDialog>,
     private applicationsService: ApplicationsService,
+    private userService: UserService,
     private fb: FormBuilder
   ) {
     this.form = this.fb.group({
@@ -102,7 +118,7 @@ export class NewAppDialog {
       state: ['', Validators.required],
       minPay: ['', Validators.required],
       maxPay: ['', Validators.required],
-      linkToCompanySite: ['', [Validators.required, urlValidator()]],
+      linkToCompanySite: ['', urlValidator()],
       linkToJobPost: ['', urlValidator()],
       descriptionOfJob: ['', Validators.required],
       closed: [false],
@@ -128,27 +144,27 @@ export class NewAppDialog {
   }
 
   addApplication(formData: any) {
-    console.log('Form data:', {
-      company: formData.company,
-      position: formData.position,
-      type: {
-        id: 0,
-        name: formData.type
-      },
-      location: formData.city + ", " + formData.state,
-      minPay: formData.minPay,
-      maxPay: formData.maxPay,
-      linkToCompanySite: formData.linkToCompanySite,
-      linkToJobPost: (formData.linkToJobPost !== "") ? formData.linkToJobPost : undefined,
-      descriptionOfJob: formData.descriptionOfJob,
-      closed: formData.closed,
-      closedReason: {
-        id: 0,
-        name: formData.closedReason
-      },
-      dateApplied: this.dateApplied.value?.getFullYear() + "-" + (this.dateApplied.value!.getMonth()+1) + "-" + this.dateApplied.value?.getDate(),
-      dateClosed: (formData.closed) ? this.dateClosed.value?.getFullYear() + "-" + (this.dateClosed.value!.getMonth()+1) + "-" + this.dateClosed.value?.getDate() : undefined,
-    });
+    // console.log('Form data:', {
+    //   company: formData.company,
+    //   position: formData.position,
+    //   type: {
+    //     id: 0,
+    //     name: formData.type
+    //   },
+    //   location: formData.city + ", " + formData.state,
+    //   minPay: formData.minPay,
+    //   maxPay: formData.maxPay,
+    //   linkToCompanySite: formData.linkToCompanySite,
+    //   linkToJobPost: formData.linkToJobPost,
+    //   descriptionOfJob: formData.descriptionOfJob,
+    //   closed: formData.closed,
+    //   closedReason: {
+    //     id: 0,
+    //     name: formData.closedReason
+    //   },
+    //   dateApplied: this.dateApplied.value?.getFullYear() + "-" + (this.dateApplied.value!.getMonth()+1) + "-" + this.dateApplied.value?.getDate(),
+    //   dateClosed: (formData.closed) ? this.dateClosed.value?.getFullYear() + "-" + (this.dateClosed.value!.getMonth()+1) + "-" + this.dateClosed.value?.getDate() : undefined,
+    // });
 
     this.applicationsService.addApplication({
       company: formData.company,
@@ -158,13 +174,13 @@ export class NewAppDialog {
       minPay: formData.minPay,
       maxPay: formData.maxPay,
       linkToCompanySite: formData.linkToCompanySite,
-      linkToJobPost: (formData.linkToJobPost !== "") ? formData.linkToJobPost : undefined,
+      linkToJobPost: formData.linkToJobPost,
       descriptionOfJob: formData.descriptionOfJob,
       closed: formData.closed,
       closedReason: formData.closedReason,
       dateApplied: this.dateApplied.value?.getFullYear() + "-" + (this.dateApplied.value!.getMonth()+1) + "-" + this.dateApplied.value?.getDate(),
-      dateClosed: (formData.closed) ? this.enteredClosedDate : '0001-01-01',
-    })
+      dateClosed: (formData.closed) ? this.dateClosed.value?.getFullYear() + "-" + (this.dateClosed.value!.getMonth()+1) + "-" + this.dateClosed.value?.getDate() : '0001-01-01',
+    }, this.user)
 
     // Perform further actions such as saving data to a service or API
     this.dialogRef.close();
