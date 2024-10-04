@@ -23,6 +23,8 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MAT_DATE_FORMATS, MAT_NATIVE_DATE_FORMATS, provideNativeDateAdapter } from '@angular/material/core';
 import { DatePipe } from '@angular/common';
+import { UserService } from '../user.service';
+import { UserInfo } from '../user.model';
 
 // animal: 'panda' | 'unicorn' | 'lion';
 
@@ -79,13 +81,40 @@ export class AppDialog {
   ],
 })
 export class EditAppDialog {
-  constructor(@Inject(MAT_DIALOG_DATA) public data: Application, public dialogRef: MatDialogRef<EditAppDialog>, private applicationsService: ApplicationsService) {}
+  constructor(@Inject(MAT_DIALOG_DATA) public data: Application, public dialogRef: MatDialogRef<EditAppDialog>, private applicationsService: ApplicationsService, private userService: UserService) {}
 
-  readonly dateApplied = new FormControl(new Date(this.data.dateApplied));
+  user: UserInfo = {
+    id: 0,
+    sessionToken: ''
+  }
+
+  ngOnInit(): void {
+    this.userService.user$.subscribe(status => {
+      this.user.id = status.id;
+      this.user.sessionToken = status.sessionToken;
+    });
+  }
+
+  // readonly dateApplied = new FormControl(new Date(this.data.dateApplied));
   // readonly dateClosed = (this.data.closed ? new FormControl(new Date(this.data.dateClosed!)) : new FormControl(new Date()));
   applicationClosed: boolean = (this.data.closedReason != null);
 
   id: number = this.data.id;
+
+  // data.dateApplied = '';
+  // YYYY-MM-DD
+
+  formatDate(date: string): string {
+    let newDate = "";
+    // YYYY-MM-DD-> MM/DD/YYYY
+    // console.log("OLD DATE: " + date);
+    // // YYYY-MM-0D
+    // newDate = date.slice(5,7) + '/' + date.slice(8, 10) + '/' + date.slice(0,4)
+
+    // console.log("NEW DATE: " + newDate);
+
+    return date;
+  }
 
   enteredCompany: string = this.data.company;
   enteredPosition: string = this.data.position;
@@ -133,13 +162,15 @@ export class EditAppDialog {
         id: 0,
         name: formData.closedReason
       },
-      dateApplied: this.dateApplied.value?.getFullYear() + "-" + (this.dateApplied.value!.getMonth() + 1) + "-" + (this.dateApplied.value?.getDate()!),
+      dateApplied: this.enteredDateApplied,
       dateClosed: (formData.closed) ? this.enteredClosedDate! : '0001-01-01',
     };
 
+    // this.dateApplied.value?.getFullYear() + "-" + (this.dateApplied.value!.getMonth() + 1) + "-" + (this.dateApplied.value?.getDate()!)
+
     console.log(edittedApp);
 
-    this.applicationsService.editApplication(edittedApp);
+    this.applicationsService.editApplication(edittedApp, this.user);
 
     // Perform further actions such as saving data to a service or API
     this.dialogRef.close();

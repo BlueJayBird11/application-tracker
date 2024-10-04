@@ -162,21 +162,17 @@
     <p>
       <mat-form-field>
         <mat-label>Date Applied</mat-label>
-        <input
-          matInput
-          [matDatepicker]="picker"
-          [formControl]="dateApplied"
-          required
-        />
+        <input matInput [matDatepicker]="picker" name="dateApplied" required />
+        <!-- [formControl]="dateApplied" -->
         <mat-datepicker-toggle
           matIconSuffix
           [for]="picker"
         ></mat-datepicker-toggle>
         <mat-datepicker #picker></mat-datepicker>
-        @if (dateApplied.invalid && (dateApplied.dirty || dateApplied.touched))
+        <!-- @if (dateApplied.invalid && (dateApplied.dirty || dateApplied.touched))
         {
         <mat-error> Date applied is required </mat-error>
-        }
+        } -->
       </mat-form-field>
     </p>
     <p>
