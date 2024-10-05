@@ -188,11 +188,23 @@ export class EditAppDialog {
   ],
 })
 export class DeleteAppDialog {
-  constructor(@Inject(MAT_DIALOG_DATA) public data: number, public dialogRef: MatDialogRef<EditAppDialog>, private applicationsService: ApplicationsService) {}
+  constructor(@Inject(MAT_DIALOG_DATA) public data: number, public dialogRef: MatDialogRef<EditAppDialog>, private applicationsService: ApplicationsService, private userService: UserService) {}
+
+  user: UserInfo = {
+    id: 0,
+    sessionToken: ''
+  }
+
+  ngOnInit(): void {
+    this.userService.user$.subscribe(status => {
+      this.user.id = status.id;
+      this.user.sessionToken = status.sessionToken;
+    });
+  }
 
   onDelButtonClick() {
     // remove application
-    this.applicationsService.deleteApplicationById(this.data)
+    this.applicationsService.deleteApplicationById(this.data, this.user)
     this.dialogRef.close();
   }
 }

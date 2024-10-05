@@ -352,7 +352,13 @@ export class ApplicationsService {
       return;
     }
 
-    let creationSuccessfull = await this.updateApplication(applicationData, jobTypeId, closedReasonId, user);
+    let updateSuccessfull = await this.updateApplication(applicationData, jobTypeId, closedReasonId, user);
+
+    if (!updateSuccessfull)
+    {
+      console.log("Something went wrong");
+      return;
+    }
 
     let tempList: Application[] = this.applications.getValue();
 
@@ -377,9 +383,48 @@ export class ApplicationsService {
     this.applications.next(tempList);
   }
 
-  deleteApplicationById(id: number)
+  async requestDeleteApplication(id: number, user: UserInfo): Promise<boolean>
+  {
+    const url = 'https://localhost:7187/api/JobApplication/' + id;
+    const params = {
+      userId: user.id,
+      sessionKey: user.sessionToken
+    };
+
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'accept': '*/*'
+    });
+
+    try {
+      const response = await this.http.delete(url, { headers, params, responseType: 'text' as 'json' }).toPromise()
+      console.log('application deleted: ', response);
+      // localStorage.setItem('userId', re);
+      return true;
+    } catch (error) {
+      console.error('Creating Application', error);
+      return false;
+    }
+  }
+
+  async deleteApplicationById(id: number, user: UserInfo)
   {
     // contact server
+    if (user.id == 0) // !this.isLoggedIn
+    {
+      console.log("Not logged in")
+      // this.addApplication(applicationData);
+      return;
+    }
+
+    let deleteSuccessfull = await this.requestDeleteApplication(id, user);
+
+    if (!deleteSuccessfull)
+    {
+      console.log("Something went wrong");
+      return;
+    }
+
     let tempList: Application[] = this.applications.getValue().filter((application) => application.id !== id);
     this.applications.next(tempList);
   }
