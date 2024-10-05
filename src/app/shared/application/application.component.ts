@@ -26,8 +26,6 @@ import { DatePipe } from '@angular/common';
 import { UserService } from '../user.service';
 import { UserInfo } from '../user.model';
 
-// animal: 'panda' | 'unicorn' | 'lion';
-
 @Component({
   selector: 'app-application',
   standalone: true,
@@ -95,26 +93,20 @@ export class EditAppDialog {
     });
   }
 
-  // readonly dateApplied = new FormControl(new Date(this.data.dateApplied));
-  // readonly dateClosed = (this.data.closed ? new FormControl(new Date(this.data.dateClosed!)) : new FormControl(new Date()));
+  incrementDate(date: string): Date {
+    let newdate = new Date(date);
+    newdate.setDate(newdate.getDate() + 1);
+    return newdate;
+  }
+
+  dateClosedDate: Date = (this.data.closedReason ? new Date(this.incrementDate(this.data.dateClosed!)) : new Date());
+
+  readonly dateApplied = new FormControl(new Date(this.incrementDate(this.data.dateApplied)));
+  readonly dateClosed = (this.data.closedReason ? new FormControl(this.dateClosedDate) : new FormControl(new Date()));
+
   applicationClosed: boolean = (this.data.closedReason != null);
 
   id: number = this.data.id;
-
-  // data.dateApplied = '';
-  // YYYY-MM-DD
-
-  formatDate(date: string): string {
-    let newDate = "";
-    // YYYY-MM-DD-> MM/DD/YYYY
-    // console.log("OLD DATE: " + date);
-    // // YYYY-MM-0D
-    // newDate = date.slice(5,7) + '/' + date.slice(8, 10) + '/' + date.slice(0,4)
-
-    // console.log("NEW DATE: " + newDate);
-
-    return date;
-  }
 
   enteredCompany: string = this.data.company;
   enteredPosition: string = this.data.position;
@@ -128,7 +120,7 @@ export class EditAppDialog {
   enteredDescriptionOfJob: string = this.data.description;
   enteredClosedReason?: string = this.data.closedReason?.name;
   enteredDateApplied: string = this.data.dateApplied;
-  enteredClosedDate: string | undefined = (this.data.dateClosed !== undefined) ? this.data.dateClosed : undefined;
+  enteredDateClosed: string = (this.data.closedReason) ? this.dateClosedDate!.toISOString() : '';
 
   toggleApplicationClosed(event: Event) {
     this.applicationClosed = (event.target as HTMLInputElement).checked;
@@ -156,14 +148,14 @@ export class EditAppDialog {
       minPay: formData.minPay,
       maxPay: formData.maxPay,
       linkToCompanySite: formData.linkToCompanySite,
-      linkToJobPost: (formData.linkToJobPost !== "") ? formData.linkToJobPost : undefined,
+      linkToJobPost: formData.linkToJobPost,
       description: formData.descriptionOfJob,
       closedReason: {
         id: 0,
         name: formData.closedReason
       },
-      dateApplied: this.enteredDateApplied,
-      dateClosed: (formData.closed) ? this.enteredClosedDate! : '0001-01-01',
+      dateApplied: this.dateApplied.value?.getFullYear() + "-" + (this.dateApplied.value!.getMonth()+1) + "-" + this.dateApplied.value?.getDate(),
+      dateClosed: (formData.closed) ? this.dateClosed.value?.getFullYear() + "-" + (this.dateClosed.value!.getMonth()+1) + "-" + this.dateClosed.value?.getDate() : '0001-01-01',
     };
 
     // this.dateApplied.value?.getFullYear() + "-" + (this.dateApplied.value!.getMonth() + 1) + "-" + (this.dateApplied.value?.getDate()!)

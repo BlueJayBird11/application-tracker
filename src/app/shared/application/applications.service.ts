@@ -533,7 +533,7 @@ export class ApplicationsService {
           id: 3,
           name: "Looking for other people"
         },
-        dateApplied: '2024-06-02',
+        dateApplied: '2024-06-01',
         dateClosed: '2024-06-09'
       },
       {
