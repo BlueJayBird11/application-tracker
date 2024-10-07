@@ -71,13 +71,43 @@ export class UserService {
   }
 
 
-  signup(email: string, password: string)
+  async signup(enteredEmail: string, enteredPassword: string): Promise<boolean>
   {
-    // Make request to api to make new account
+    const url = "https://localhost:7187/api/User";
 
-    // Retrieve response, if response it good, login with information
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'accept': '*/*'
+    });
 
-    // Else display error
+    const body = {
+      email: enteredEmail,
+      passwordHash: enteredPassword
+    };
+
+      try {
+        const response = await this.http.post<{userId: number, sessionKey: string}>(url, body, { headers }).toPromise()
+        console.log('login successful', response);
+        // localStorage.setItem('userId', re);
+        const userId = response!.userId;
+        const sessionToken = response!.sessionKey;
+
+        console.log(userId);
+        console.log(sessionToken);
+        // this.user.id = userId;
+        // this.user.sessionToken = sessionToken;
+
+        this.user.next({
+          id: userId,
+          sessionToken: sessionToken
+        })
+        this.loggedIn.next(true);
+        localStorage.setItem('isLoggedIn', 'true'); // Save status
+        return true;
+      } catch (error) {
+        console.error('Error logging in', error);
+        return false;
+      }
   }
 
   signOut(): void {
