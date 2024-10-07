@@ -44,6 +44,10 @@ export class NavbarComponent {
       width: '50%',
     });
   }
+
+  onClickSignOut() {
+    this.userService.signOut();
+  }
 }
 
 export class MyErrorStateMatcher implements ErrorStateMatcher {
@@ -91,7 +95,7 @@ export class CreateAccountDialog {
 
   constructor(
     public dialogRef: MatDialogRef<CreateAccountDialog>,
-    private applicationsService: ApplicationsService,
+    private userService: UserService,
     private fb: FormBuilder
   ) {
     this.form = new FormGroup(
@@ -148,7 +152,7 @@ export class CreateAccountDialog {
     });
   }
 
-  onSignUpButtonClick() {
+  async onSignUpButtonClick() {
     // console.log(this.password2FormControl.errors);
     console.log('Errors: ' + this.form.errors);
     console.log('Invalid: ' + this.form.invalid);
@@ -161,9 +165,27 @@ export class CreateAccountDialog {
       return;
     }
 
-    // Make request
+    console.log(this.form.value);
 
-    console.log("Login");
+    // Make request
+    try {
+      const success: boolean = await this.userService.signup(this.form.value.email, this.form.value.password1);
+
+      if (success) {
+        console.log("Navbar: Sign-Up Successful");
+        this.dialogRef.close();
+      } else {
+        // Display error
+        console.log("Navbar: Error signing up");
+      }
+    } catch (error) {
+      console.error("Navbar: An error occurred while signing up", error);
+    }
+
+
+    // console.log("Sign Up and Login");
+    // this.dialogRef.close();
+
   }
 }
 

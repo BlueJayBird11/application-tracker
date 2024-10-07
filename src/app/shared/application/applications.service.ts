@@ -1,19 +1,42 @@
-import { Injectable } from '@angular/core';
+import { ChangeDetectorRef, Injectable } from '@angular/core';
 import { Application, ApplicationSubData, NewApplicationData } from './application.model';
 import * as Papa from 'papaparse';
 import { UserService } from '../user.service';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { UserInfo } from '../user.model';
+import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 // https://drive.google.com/file/d/1NgL_RpbuDEcW5Fimhmkj3U-BGHF0sAAb/view
 export class ApplicationsService {
-  private applications: Application[] = [];
+  // private applications: Application[] = [];
+  private applications = new BehaviorSubject<Application[]>([]);
+  public applications$ = this.applications.asObservable();
+
+  // isLoggedIn: boolean = false;
+  // user: UserInfo = {
+  //   id: 0,
+  //   sessionToken: ''
+  // }
 
   constructor(private http: HttpClient, private userService: UserService) {
 
   }
+
+  // ngOnInit(): void {
+  //   this.userService.user$.subscribe(status => {
+  //     this.user.id = status.id;
+  //     this.user.sessionToken = status.sessionToken;
+  //     // this.cd.detectChanges();
+  //   });
+
+  //   this.userService.loggedIn$.subscribe(status => {
+  //     this.isLoggedIn = status;
+  //     // this.cd.detectChanges();
+  //   });
+  // }
 
   private closedReasons: ApplicationSubData[] = [
     {
@@ -89,9 +112,9 @@ export class ApplicationsService {
     return subList.filter(item => item.name == name)[0].id;
   }
 
-  getApplications(): Application[] {
-    return this.applications;
-  }
+  // getApplications(): Application[] {
+  //   return this.applications;
+  // }
 
   getApplicationById (id: number): Application
   {
@@ -114,7 +137,7 @@ export class ApplicationsService {
       closedReason: null
     }
     console.log(id);
-    const foundApplication = this.applications.find((application) => application.id === id);
+    const foundApplication = this.applications.getValue().find((application) => application.id === id);
 
     if (foundApplication)
     {
@@ -134,18 +157,62 @@ export class ApplicationsService {
     console.log(this.applications);
   }
 
-  addApplication(applicationData: NewApplicationData)
-  {
-    // Contact server and tell them to add a application
+  async createApplication(applicationData: NewApplicationData, jobTypeId: number, closedReasonId: number, user: UserInfo) : Promise<boolean> {
+    const url = 'https://localhost:7187/api/JobApplication';
+    const params = {
+      userId: user.id,
+      jobTypeId: jobTypeId,
+      closedReasonId: closedReasonId,
+      sessionKey: user.sessionToken
+    };
 
-    let jobTypeId: number = this.findIdByName(applicationData.type, this.jobTypes);
-    let closedReasonId: number = ((applicationData.closedReason != undefined) ? this.findIdByName(applicationData.closedReason, this.closedReasons) : 0);
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'accept': '*/*'
+    });
 
-    console.log("jobTypeId: " + jobTypeId);
-    console.log("closedReasonId: " + closedReasonId);
+    const body = {
+      company: applicationData.company,
+      position: applicationData.position,
+      location: applicationData.location,
+      minPay: applicationData.minPay,
+      maxPay: applicationData.maxPay,
+      linkToCompanySite: applicationData.linkToCompanySite,
+      linkToJobPost: applicationData.linkToJobPost,
+      description: applicationData.descriptionOfJob,
+      dateApplied: applicationData.dateApplied,
+      dateClosed: applicationData.dateClosed
+    };
 
-    this.applications.push({
-      id: this.applications.length+1,
+    // this.http.put(url, body, { headers, params })
+    //   .subscribe(
+    //     response => {
+    //       console.log('Job application updated successfully', response);
+    //       return true;
+    //     },
+    //     error => {
+    //       console.error('Error updating job application', error);
+    //       return false;
+    //     }
+    //   );
+    // return true;
+
+    try {
+      const response = await this.http.post<{userId: number, sessionKey: string}>(url, body, { headers, params, responseType: 'text' as 'json' }).toPromise()
+      console.log('application posted: ', response);
+      // localStorage.setItem('userId', re);
+      return true;
+    } catch (error) {
+      console.error('Creating Application', error);
+      return false;
+    }
+  }
+
+  pushToApplications(applicationData: NewApplicationData, user: UserInfo) {
+    let tempList: Application[] = this.applications.getValue();
+
+    tempList.push({
+      id: this.applications.getValue().length+1,
       company: applicationData.company,
       position: applicationData.position,
       jobType: {
@@ -164,17 +231,77 @@ export class ApplicationsService {
       } : null,
       dateApplied: applicationData.dateApplied,
       dateClosed: applicationData.dateClosed,
-    });
+    })
+
+    this.applications.next(tempList);
   }
 
-  updateApplication(updatedApplication: Application, jobTypeId: number, closedReasonId: number): boolean {
-    const url = 'https://localhost:7187/api/JobApplication/' + updatedApplication.id;
+  // make sure that format is YYYY-MM-DD
+  fixDate(date: string) : string {
+    // console.log(applicationData.dateApplied);
+    let newDate: string = date;
+    if (date.length === 9) {
+      // Two possible cases to handle:
+      // 1. 0000-10-1  => 0000-10-01
+      // 2. 0000-1-10  => 0000-01-10
+
+      if (date.charAt(6) === '-') {
+        // Handle case where month is single digit (0000-1-10)
+        newDate = date.slice(0, 5) + '0' + date.slice(5);
+      } else if (date.charAt(7) === '-') {
+        // Handle case where day is single digit (0000-10-1)
+        newDate = date.slice(0, 8) + '0' + date.slice(8);
+      }
+    }
+
+    if (date.length === 8) {
+      // This should handle cases like 0000-1-1 => 0000-01-01
+      newDate = date.slice(0, 5) + '0' + date.slice(5, 7) + '0' + date.slice(7);
+    }
+
+    return newDate;
+  }
+
+  async addApplication(applicationData: NewApplicationData, user: UserInfo)
+  {
+    // Contact server and tell them to add a application
+
+    let jobTypeId: number = this.findIdByName(applicationData.type, this.jobTypes);
+    let closedReasonId: number = ((applicationData.closedReason != undefined) ? this.findIdByName(applicationData.closedReason, this.closedReasons) : 0);
+
+    console.log("jobTypeId: " + jobTypeId);
+    console.log("closedReasonId: " + closedReasonId);
+
+    applicationData.dateApplied = this.fixDate(applicationData.dateApplied);
+    applicationData.dateClosed = this.fixDate(applicationData.dateClosed);
+
+    console.log(applicationData);
+    console.log(user.sessionToken);
+    console.log(user.id);
+
+    if (user.id == 0) // !this.isLoggedIn
+    {
+      console.log("Not logged in")
+      // this.addApplication(applicationData);
+      return;
+    }
+
+    let creationSuccessfull = await this.createApplication(applicationData, jobTypeId, closedReasonId, user);
+
+    if (creationSuccessfull)
+    {
+      this.pushToApplications(applicationData, user);
+    }
+  }
+
+  async updateApplication(updatedApplication: Application, jobTypeId: number, closedReasonId: number, user: UserInfo): Promise<boolean> {
+    const url = 'https://localhost:7187/api/JobApplication/jobApplicationId';
     const params = {
-      applicationId: updatedApplication.id,
-      userId: this.userService.user.id,
+      jobApplicationId: updatedApplication.id,
+      userId: user.id,
       jobTypeId: jobTypeId,
       closedReasonId: closedReasonId,
-      sessionKey: this.userService.user.sessionToken
+      sessionKey: user.sessionToken
     };
 
     const headers = new HttpHeaders({
@@ -196,22 +323,18 @@ export class ApplicationsService {
       dateClosed: updatedApplication.dateClosed
     };
 
-    this.http.put(url, body, { headers, params })
-      .subscribe(
-        response => {
-          console.log('Job application updated successfully', response);
-          return true;
-        },
-        error => {
-          console.error('Error updating job application', error);
-          return false;
-        }
-      );
-
+    try {
+      const response = await this.http.put<{userId: number, sessionKey: string}>(url, body, { headers, params, responseType: 'text' as 'json' }).toPromise()
+      console.log('application updated: ', response);
+      // localStorage.setItem('userId', re);
+      return true;
+    } catch (error) {
+      console.error('Creating Application', error);
       return false;
+    }
   }
 
-  editApplication(applicationData: Application) {
+  async editApplication(applicationData: Application, user: UserInfo) {
     // Contact server and tell them to edit this application
 
     let jobTypeId: number = this.findIdByName(applicationData.jobType.name, this.jobTypes);
@@ -219,13 +342,27 @@ export class ApplicationsService {
     // console.log("jobTypeId: " + jobTypeId);
     // console.log("closedReasonId: " + closedReasonId);
 
-    if (!this.updateApplication(applicationData, jobTypeId, closedReasonId))
+    applicationData.dateApplied = this.fixDate(applicationData.dateApplied);
+    applicationData.dateClosed = this.fixDate(applicationData.dateClosed);
+
+    if (user.id == 0) // !this.isLoggedIn
     {
-      console.log("Error updating application");
-      return
+      console.log("Not logged in")
+      // this.addApplication(applicationData);
+      return;
     }
 
-    for (let application of this.applications) {
+    let updateSuccessfull = await this.updateApplication(applicationData, jobTypeId, closedReasonId, user);
+
+    if (!updateSuccessfull)
+    {
+      console.log("Something went wrong");
+      return;
+    }
+
+    let tempList: Application[] = this.applications.getValue();
+
+    for (let application of tempList) {
       if (application.id === applicationData.id) {
         application.company = applicationData.company;
         application.position = applicationData.position;
@@ -242,13 +379,54 @@ export class ApplicationsService {
         break;
       }
     }
+
+    this.applications.next(tempList);
   }
 
-  deleteApplicationById(id: number)
+  async requestDeleteApplication(id: number, user: UserInfo): Promise<boolean>
+  {
+    const url = 'https://localhost:7187/api/JobApplication/' + id;
+    const params = {
+      userId: user.id,
+      sessionKey: user.sessionToken
+    };
+
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'accept': '*/*'
+    });
+
+    try {
+      const response = await this.http.delete(url, { headers, params, responseType: 'text' as 'json' }).toPromise()
+      console.log('application deleted: ', response);
+      // localStorage.setItem('userId', re);
+      return true;
+    } catch (error) {
+      console.error('Creating Application', error);
+      return false;
+    }
+  }
+
+  async deleteApplicationById(id: number, user: UserInfo)
   {
     // contact server
+    if (user.id == 0) // !this.isLoggedIn
+    {
+      console.log("Not logged in")
+      // this.addApplication(applicationData);
+      return;
+    }
 
-    this.applications = this.applications.filter((application) => application.id !== id);
+    let deleteSuccessfull = await this.requestDeleteApplication(id, user);
+
+    if (!deleteSuccessfull)
+    {
+      console.log("Something went wrong");
+      return;
+    }
+
+    let tempList: Application[] = this.applications.getValue().filter((application) => application.id !== id);
+    this.applications.next(tempList);
   }
 
   exportToCsv(applications: Application[]): void {
@@ -285,12 +463,12 @@ export class ApplicationsService {
     URL.revokeObjectURL(url);
   }
 
-  retrieveApplications(userId: number) {
-    this.applications = []
+  async retrieveApplications(userId: number, sessionToken: string) {
+    this.applications.next([]);
     // retrieve user's applications from server
     const url = `https://localhost:7187/api/User/${userId}/applications`;
     const params = {
-      sessionKey: this.userService.user.sessionToken
+      sessionKey: sessionToken
     };
 
     const headers = new HttpHeaders({
@@ -298,19 +476,27 @@ export class ApplicationsService {
       'accept': '*/*'
     });
 
-    this.http.get(url, { headers, params })
-      .subscribe(
-        response => {
-          console.log('Job applications retrieved successfully', response);
-        },
-        error => {
-          console.error('Error retrieved job applications', error);
-        }
-      );
+    // this.http.get(url, { headers, params })
+    //   .subscribe(
+    //     response => {
+    //       console.log('Job applications retrieved successfully', response);
+    //     },
+    //     error => {
+    //       console.error('Error retrieved job applications', error);
+    //     }
+    //   );
+    try {
+      const response = await this.http.get<Application[]>(url, { headers, params }).toPromise()
+      console.log('Job applications retrieved successfully', response);
+      this.applications.next(response!);
+
+    } catch (error) {
+      console.error('Error retrieved job applications', error);
+    }
   }
 
   useDefaultData() {
-    this.applications = [
+    this.applications.next([
       {
         id: 1,
         company: 'Meta',
@@ -325,7 +511,7 @@ export class ApplicationsService {
         linkToCompanySite: 'https://www.meta.com/',
         linkToJobPost: 'https://www.metacareers.com/jobs/410406138583811/',
         description: 'Meta Platforms, Inc. (Meta), formerly known as Facebook Inc., builds technologies that help people connect, find communities, and grow businesses. When Facebook launched in 2004, it changed the way people connect. Apps and services like Messenger, Instagram, and WhatsApp further empowered billions around the world. Now, Meta is moving beyond 2D screens toward immersive experiences like augmented and virtual reality to help build the next evolution in social technology. To apply, click “Apply to Job” online on this web page.',
-        dateApplied: '2024-6-16',
+        dateApplied: '2024-06-05',
         dateClosed: '0001-01-01',
         closedReason: null
       },
@@ -347,8 +533,8 @@ export class ApplicationsService {
           id: 3,
           name: "Looking for other people"
         },
-        dateApplied: '2024-6-10',
-        dateClosed: '2024-06-16'
+        dateApplied: '2024-06-01',
+        dateClosed: '2024-06-09'
       },
       {
         id: 3,
@@ -364,7 +550,7 @@ export class ApplicationsService {
         linkToCompanySite: 'https://www.microsoft.com/en-us',
         linkToJobPost: 'https://jobs.careers.microsoft.com/global/en/share/1731080/?utm_source=JobShare&utm_campaign=Copy-job-share',
         description: 'The Industry Solutions Engineering (ISE) team is a global engineering organization that works directly with customers looking to leverage the latest technologies to address their toughest challenges. We work closely with our customers’ engineers to jointly develop code for cloud-based solutions that can accelerate their organization. We work in collaboration with Microsoft product teams, partners, and open-source communities to empower our customers to do more with the cloud. We pride ourselves in making contributions to open source and making our platforms easier to use.',
-        dateApplied: '2024-6-15',
+        dateApplied: '2024-06-15',
         dateClosed: '0001-01-01',
         closedReason: null
       },
@@ -382,7 +568,7 @@ export class ApplicationsService {
         linkToCompanySite: 'https://www.apple.com/',
         linkToJobPost: 'https://jobs.apple.com/en-us/details/200548268/software-development-engineer?team=SFTWR',
         description: 'Imagine what you could do here. At Apple, new ideas have a way of becoming extraordinary products, services, and customer experiences very quickly. Bring passion and dedication to your job and there\'s no telling what you could accomplish. The people here at Apple don’t just build products — they craft the kind of wonder that’s revolutionized entire industries. It’s the diversity of those people and their ideas that encourages the innovation that runs through everything we do, from amazing technology to industry-leading environmental efforts. Join Apple and help us leave the world better than we found it. The Operations SWE team is a part of Manufacturing Systems & Infrastructure team and is responsible for developing infrastructure and manufacturing solutions used to create and service future Apple products. The Operations SWE Team is seeking a highly motivated individual with a background in software development.  In this position, the candidate’s primary responsibility will be designing and developing solutions on both our production lines and within our testing equipment, while collaborating closely with other Apple development software, hardware and testing teams.  The Ops Software Engineer will also be responsible for maintaining and improving existing software solutions.',
-        dateApplied: '2024-6-15',
+        dateApplied: '2024-06-15',
         dateClosed: '0001-01-01',
         closedReason: null
       },
@@ -400,10 +586,10 @@ export class ApplicationsService {
         linkToCompanySite: 'https://www.amazon.com/',
         linkToJobPost: 'https://www.amazon.jobs/en/jobs/2664700/software-development-engineer-amazon-aurora-storage',
         description: 'Are you interested in building hyper-scale database services in the cloud? Do you want to revolutionize the way people manage vast volumes of data in the cloud? Do you want to have direct and immediate impact on hundreds of thousands of users who use AWS database services?',
-        dateApplied: '2024-6-14',
+        dateApplied: '2024-06-14',
         dateClosed: '0001-01-01',
         closedReason: null
       }
-    ];
+    ]);
   }
 }

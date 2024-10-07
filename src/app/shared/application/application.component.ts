@@ -23,8 +23,8 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MAT_DATE_FORMATS, MAT_NATIVE_DATE_FORMATS, provideNativeDateAdapter } from '@angular/material/core';
 import { DatePipe } from '@angular/common';
-
-// animal: 'panda' | 'unicorn' | 'lion';
+import { UserService } from '../user.service';
+import { UserInfo } from '../user.model';
 
 @Component({
   selector: 'app-application',
@@ -79,10 +79,31 @@ export class AppDialog {
   ],
 })
 export class EditAppDialog {
-  constructor(@Inject(MAT_DIALOG_DATA) public data: Application, public dialogRef: MatDialogRef<EditAppDialog>, private applicationsService: ApplicationsService) {}
+  constructor(@Inject(MAT_DIALOG_DATA) public data: Application, public dialogRef: MatDialogRef<EditAppDialog>, private applicationsService: ApplicationsService, private userService: UserService) {}
 
-  readonly dateApplied = new FormControl(new Date(this.data.dateApplied));
-  // readonly dateClosed = (this.data.closed ? new FormControl(new Date(this.data.dateClosed!)) : new FormControl(new Date()));
+  user: UserInfo = {
+    id: 0,
+    sessionToken: ''
+  }
+
+  ngOnInit(): void {
+    this.userService.user$.subscribe(status => {
+      this.user.id = status.id;
+      this.user.sessionToken = status.sessionToken;
+    });
+  }
+
+  incrementDate(date: string): Date {
+    let newdate = new Date(date);
+    newdate.setDate(newdate.getDate() + 1);
+    return newdate;
+  }
+
+  dateClosedDate: Date = (this.data.closedReason ? new Date(this.incrementDate(this.data.dateClosed!)) : new Date());
+
+  readonly dateApplied = new FormControl(new Date(this.incrementDate(this.data.dateApplied)));
+  readonly dateClosed = (this.data.closedReason ? new FormControl(this.dateClosedDate) : new FormControl(new Date()));
+
   applicationClosed: boolean = (this.data.closedReason != null);
 
   id: number = this.data.id;
@@ -99,7 +120,7 @@ export class EditAppDialog {
   enteredDescriptionOfJob: string = this.data.description;
   enteredClosedReason?: string = this.data.closedReason?.name;
   enteredDateApplied: string = this.data.dateApplied;
-  enteredClosedDate: string | undefined = (this.data.dateClosed !== undefined) ? this.data.dateClosed : undefined;
+  enteredDateClosed: string = (this.data.closedReason) ? this.dateClosedDate!.toISOString() : '';
 
   toggleApplicationClosed(event: Event) {
     this.applicationClosed = (event.target as HTMLInputElement).checked;
@@ -127,19 +148,21 @@ export class EditAppDialog {
       minPay: formData.minPay,
       maxPay: formData.maxPay,
       linkToCompanySite: formData.linkToCompanySite,
-      linkToJobPost: (formData.linkToJobPost !== "") ? formData.linkToJobPost : undefined,
+      linkToJobPost: formData.linkToJobPost,
       description: formData.descriptionOfJob,
       closedReason: {
         id: 0,
         name: formData.closedReason
       },
-      dateApplied: this.dateApplied.value?.getFullYear() + "-" + (this.dateApplied.value!.getMonth() + 1) + "-" + (this.dateApplied.value?.getDate()!),
-      dateClosed: (formData.closed) ? this.enteredClosedDate! : '0001-01-01',
+      dateApplied: this.dateApplied.value?.getFullYear() + "-" + (this.dateApplied.value!.getMonth()+1) + "-" + this.dateApplied.value?.getDate(),
+      dateClosed: (formData.closed) ? this.dateClosed.value?.getFullYear() + "-" + (this.dateClosed.value!.getMonth()+1) + "-" + this.dateClosed.value?.getDate() : '0001-01-01',
     };
+
+    // this.dateApplied.value?.getFullYear() + "-" + (this.dateApplied.value!.getMonth() + 1) + "-" + (this.dateApplied.value?.getDate()!)
 
     console.log(edittedApp);
 
-    this.applicationsService.editApplication(edittedApp);
+    this.applicationsService.editApplication(edittedApp, this.user);
 
     // Perform further actions such as saving data to a service or API
     this.dialogRef.close();
@@ -157,11 +180,23 @@ export class EditAppDialog {
   ],
 })
 export class DeleteAppDialog {
-  constructor(@Inject(MAT_DIALOG_DATA) public data: number, public dialogRef: MatDialogRef<EditAppDialog>, private applicationsService: ApplicationsService) {}
+  constructor(@Inject(MAT_DIALOG_DATA) public data: number, public dialogRef: MatDialogRef<EditAppDialog>, private applicationsService: ApplicationsService, private userService: UserService) {}
+
+  user: UserInfo = {
+    id: 0,
+    sessionToken: ''
+  }
+
+  ngOnInit(): void {
+    this.userService.user$.subscribe(status => {
+      this.user.id = status.id;
+      this.user.sessionToken = status.sessionToken;
+    });
+  }
 
   onDelButtonClick() {
     // remove application
-    this.applicationsService.deleteApplicationById(this.data)
+    this.applicationsService.deleteApplicationById(this.data, this.user)
     this.dialogRef.close();
   }
 }

@@ -136,7 +136,6 @@
       <mat-form-field>
         <mat-label>Link to Company Site</mat-label>
         <input
-          required
           matInput
           placeholder="https://www.google.com/"
           name="linkToCompanySite"
@@ -169,15 +168,16 @@
           [formControl]="dateApplied"
           required
         />
+        <!-- name="dateApplied" -->
         <mat-datepicker-toggle
           matIconSuffix
           [for]="picker"
         ></mat-datepicker-toggle>
         <mat-datepicker #picker></mat-datepicker>
-        @if (dateApplied.invalid && (dateApplied.dirty || dateApplied.touched))
+        <!-- @if (dateApplied.invalid && (dateApplied.dirty || dateApplied.touched))
         {
         <mat-error> Date applied is required </mat-error>
-        }
+        } -->
       </mat-form-field>
     </p>
     <p>
@@ -242,9 +242,11 @@
           name="dateClosed"
           [disabled]="!applicationClosed"
           [required]="applicationClosed"
-          [(ngModel)]="enteredClosedDate"
+          [(ngModel)]="enteredDateClosed"
           #dateClosed="ngModel"
         />
+        <!-- [matDatepicker]="picker"
+          [formControl]="dateApplied" -->
         <mat-datepicker-toggle
           matIconSuffix
           [for]="closedDate"
