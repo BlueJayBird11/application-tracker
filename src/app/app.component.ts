@@ -10,11 +10,12 @@ import { StatisticsComponent } from './statistics/statistics.component';
 import { ApplicationsService } from './shared/application/applications.service';
 import { UserService } from './shared/user.service';
 import { UserInfo } from './shared/user.model';
+import { FooterComponent } from './footer/footer.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, NavbarComponent, OngoingSectionComponent, MatDivider, ClosedSectionComponent, StatisticsComponent],
+  imports: [RouterOutlet, NavbarComponent, OngoingSectionComponent, MatDivider, ClosedSectionComponent, StatisticsComponent, FooterComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })
